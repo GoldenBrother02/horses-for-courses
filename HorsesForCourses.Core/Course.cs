@@ -73,13 +73,16 @@ public class Course
         {
             if (!Planning.Contains(ct))
             {
-                var start = ct.StartTime;
-                var end = ct.EndTime;
-                while (end <= Duration.EndTime)
+                if (ct.EndTime - ct.StartTime < new TimeSpan(8, 0, 0))
                 {
-                    Planning.Add(CourseTime.From(start, end));
-                    start.AddDays(7.0);
-                    end.AddDays(7.0);
+                    var start = ct.StartTime;
+                    var end = ct.EndTime;
+                    while (end <= Duration.EndTime)
+                    {
+                        Planning.Add(CourseTime.From(start, end));
+                        start.AddDays(7.0);
+                        end.AddDays(7.0);
+                    }
                 }
             }
             else
