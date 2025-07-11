@@ -103,6 +103,7 @@ public class CourseTest
         course.ConfirmCourse();
 
         Benny.AddCompetence("Eyes");
+
         var exception2 = Assert.Throws<Exception>(() => course.AddCoach(Benny));
         Assert.Equal("The coach does not meet the requirements for teaching this course.", exception2.Message);
 
