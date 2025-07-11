@@ -112,6 +112,8 @@ public class CourseTest
         Assert.Equal("Coach is already scheduled in for this time.", exception3.Message);
 
         course.AddCoach(Benny);
+        Assert.Equal(course.coach, Benny);
+
         var exception4 = Assert.Throws<Exception>(() => course.AddCoach(Benny));
         Assert.Equal("Course has been finalised and cannot be altered.", exception4.Message);
 
