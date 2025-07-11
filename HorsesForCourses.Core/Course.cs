@@ -34,7 +34,7 @@ public class Course
         EndDate = end;
     }
 
-    public void AddRequirements(string req)
+    public void AddRequirement(string req)
     {
         if (Status != States.FINALISED)
         {
@@ -74,21 +74,24 @@ public class Course
 
     public void ConfirmCourse()
     {
-        if (Status == States.PENDING) throw new Exception("Cannot confirm a course that's not in the PENDING state.");
-        if (Planning.Count != 0) throw new Exception("Cannot confirm a course that does not have a planning yet.");
+        if (Status != States.PENDING) throw new Exception($"Cannot confirm a course that's not in the PENDING state, the current status is {Status}");
+        if (Planning.Count == 0) throw new Exception("Cannot confirm a course that does not have a planning yet.");
 
         Status = States.CONFIRMED;
     }
 
     public void AddCoach(Coach coach)
     {
-        if (this.coach != null) throw new Exception("A coach is already planned in for this course.");
-        if (Status != States.CONFIRMED) throw new Exception("Course needs to be CONFIRMED before adding a coach.");
-        if (!coach.IsCompetent(RequiredCompetencies)) throw new Exception("The coach does not meet the requirements for teaching this course.");
-        if (Planning.Intersect(coach.bookings).Any()) throw new Exception("Coach is already scheduled in for this time.");
+        if (Status != States.FINALISED)
+        {
+            if (Status == States.PENDING) throw new Exception("Course needs to be CONFIRMED before adding a coach.");
+            if (!coach.IsCompetent(RequiredCompetencies)) throw new Exception("The coach does not meet the requirements for teaching this course.");
+            if (Planning.Intersect(coach.bookings).Any()) throw new Exception("Coach is already scheduled in for this time.");
 
-        this.coach = coach;
-        coach.BookIn(Planning);
-        Status = States.FINALISED;
+            this.coach = coach;
+            coach.BookIn(Planning);
+            Status = States.FINALISED;
+        }
+        else throw new Exception("Course has been finalised and cannot be altered.");
     }
 }
