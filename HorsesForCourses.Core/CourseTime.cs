@@ -1,35 +1,47 @@
 namespace HorsesForCourses.Core;
 
-public record CourseTime
+public record TimeSlot
 {
-    public DateTime StartTime { get; set; }
+    public DayOfWeek Day { get; set; }
 
-    public DateTime EndTime { get; set; }
+    public TimeOnly Start { get; set; }
 
-    private CourseTime(DateTime start, DateTime end) { StartTime = start; EndTime = end; }
+    public TimeOnly End { get; set; }
 
-    public static CourseTime From(DateTime start, DateTime end)
+    public TimeSlot(DayOfWeek day, TimeOnly start, TimeOnly end) { Day = day; Start = start; End = end; }
+
+    public static TimeSlot From(DayOfWeek day, TimeOnly start, TimeOnly end)
     {
-        if (start.DayOfWeek == DayOfWeek.Saturday || start.DayOfWeek == DayOfWeek.Sunday) throw new ArgumentException("Course cannot start during the weekend.");
-        if (end.DayOfWeek == DayOfWeek.Saturday || end.DayOfWeek == DayOfWeek.Sunday) throw new ArgumentException("Course cannot end during the weekend.");
-        if (start.TimeOfDay < new TimeSpan(9, 0, 0) && end.TimeOfDay > new TimeSpan(17, 0, 0)) throw new ArgumentException("Course must be planned during working hours (9:00 - 17:00).");
+        if (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday) throw new ArgumentException("Course cannot take place during the weekend.");
+        if (start < new TimeOnly(9, 0, 0) || end > new TimeOnly(17, 0, 0)) throw new ArgumentException("Course must be planned during working hours (9:00 - 17:00).");
         if (end - start < new TimeSpan(1, 0, 0)) throw new ArgumentException("Course must be one hour minimum.");
 
-        return new CourseTime(start, end);
+        return new TimeSlot(day, start, end);
     }
 
-    public bool OverlapEarly(CourseTime ct)
+
+    public bool Overlap(TimeSlot slot)
     {
-        return ct.StartTime < StartTime && ct.EndTime > StartTime;
+        return OverlapEarly(slot) || OverlapAfter(slot) || OverlapContain(slot) || OverlapEqual(slot);
     }
 
-    public bool OverlapContain(CourseTime ct)
+    private bool OverlapEarly(TimeSlot slot)
     {
-        return (ct.StartTime > StartTime && ct.EndTime < EndTime) || (ct.StartTime == StartTime && ct.EndTime == EndTime);
+        return slot.Start < Start && slot.End > Start;
     }
 
-    public bool OverlapAfter(CourseTime ct)
+    private bool OverlapContain(TimeSlot slot)
     {
-        return ct.StartTime < EndTime && ct.EndTime > EndTime;
+        return (slot.Start > Start && slot.End < End) || (slot.Start == Start && slot.End == End);
+    }
+
+    private bool OverlapAfter(TimeSlot slot)
+    {
+        return slot.Start < End && slot.End > End;
+    }
+
+    private bool OverlapEqual(TimeSlot slot)
+    {
+        return slot.Start == Start && slot.End == End;
     }
 }

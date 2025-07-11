@@ -4,9 +4,13 @@ namespace HorsesForCourses.Core;
 
 public class Coach
 {
-    public List<string> Competencies = new();
+    private List<string> Competencies = new();
 
-    public List<CourseTime> Bookings = new();
+    public IReadOnlyList<string> competencies => Competencies;
+
+    private List<TimeSlot> Bookings = new();
+
+    public IReadOnlyList<TimeSlot> bookings => Bookings;
 
     public string Name { get; set; }
 
@@ -21,40 +25,24 @@ public class Coach
 
     public void AddCompetence(string comp)
     {
-        if (!Competencies.Contains(comp))
-        {
-            Competencies.Add(comp);
-        }
-        else
-        {
-            throw new Exception($"Coach {Name} already has this competence.");
-        }
+        if (!Competencies.Contains(comp)) { Competencies.Add(comp); }
+        else throw new Exception("Coach already has this competence.");
     }
 
     public void RemoveCompetence(string comp)
     {
-        if (!Competencies.Remove(comp))
-        {
-            throw new Exception($"Coach {Name} does not have this competence.");
-        }
+        if (!Competencies.Remove(comp)) { throw new Exception("Coach does not have this competence."); }
     }
 
-    public void BookIn(CourseTime ct)
+    public void BookIn(List<TimeSlot> list)
     {
-        var busy = Bookings.Any(t => ct.OverlapEarly(ct) || ct.OverlapContain(t) || ct.OverlapAfter(t));
-        if (!busy)
-        {
-            Bookings.Add(ct);
-        }
-        else
-        {
-            throw new ArgumentException($"Coach {Name} is busy around this time.");
-        }
+        if (!bookings.Any(booking => list.Any(slot => booking.Overlap(slot)))) { Bookings.AddRange(list); }
+        else throw new Exception("Coach cannot be booked on already booked timeslots.");
     }
 
     public bool IsCompetent(List<string> requirements)
     {
-        var competent = Competencies.All(c => requirements.Contains(c));
+        var competent = requirements.All(c => Competencies.Contains(c));
 
         return competent;
     }

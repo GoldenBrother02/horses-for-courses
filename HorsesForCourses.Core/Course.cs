@@ -11,115 +11,65 @@ public class Course
 {
     public string CourseName { get; set; }
 
-    public States Status;
+    private States Status;
 
     public List<string> RequiredCompetencies { get; set; }
 
-    public List<CourseTime> Planning { get; set; }
+    public List<TimeSlot> Planning { get; set; }
 
-    public CourseTime Duration { get; set; }
+    public DateOnly StartDate { get; }
+
+    public DateOnly EndDate { get; }
 
     public Coach? coach { get; set; }
 
-    public Course(string name, DateTime start, DateTime end)
+    public Course(string name, DateOnly start, DateOnly end)
     {
         CourseName = name;
         Status = States.PENDING;
         Planning = new();
         RequiredCompetencies = new();
         coach = null;
-        Duration = CourseTime.From(start, end);
+        StartDate = start;
+        EndDate = end;
     }
-
-
 
     public void AddRequirements(string req)
     {
         if (Status != States.FINALISED)
         {
-            if (!RequiredCompetencies.Contains(req))
-            {
-                RequiredCompetencies.Add(req);
-            }
-            else
-            {
-                throw new Exception("This required competence is already added.");
-            }
+            if (!RequiredCompetencies.Contains(req)) { RequiredCompetencies.Add(req); }
+            else throw new Exception("This required competence is already added.");
         }
-        else
-        {
-            throw new Exception("Course has been finalised and cannot be altered.");
-        }
+        else throw new Exception("Course has been finalised and cannot be altered.");
     }
 
     public void RemoveRequirement(string req)
     {
         if (Status != States.FINALISED)
         {
-            if (!RequiredCompetencies.Remove(req))
-            {
-                throw new Exception("This course does not have this requirement.");
-            }
+            if (!RequiredCompetencies.Remove(req)) { throw new Exception("This course does not have this requirement."); }
         }
-        else
-        {
-            throw new Exception("Course has been finalised and cannot be altered.");
-        }
+        else throw new Exception("Course has been finalised and cannot be altered.");
     }
 
-    public void AddCourseMoment(CourseTime ct)
+    public void AddCourseMoment(TimeSlot slot)
     {
         if (Status != States.FINALISED)
         {
-            if (!Planning.Contains(ct))
-            {
-                if (ct.EndTime - ct.StartTime < new TimeSpan(8, 0, 0))
-                {
-                    var start = ct.StartTime;
-                    var end = ct.EndTime;
-                    while (end <= Duration.EndTime)
-                    {
-                        Planning.Add(CourseTime.From(start, end));
-                        start.AddDays(7.0);
-                        end.AddDays(7.0);
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception("This is already planned in.");
-            }
+            if (!Planning.Any(plan => plan.Overlap(slot))) { Planning.Add(slot); }
+            else throw new Exception("There is overlap between the time slots.");
         }
-        else
-        {
-            throw new Exception("Course has been finalised and cannot be altered.");
-        }
+        else throw new Exception("Course has been finalised and cannot be altered.");
     }
 
-    public void RemoveCourseMoment(CourseTime ct)
+    public void RemoveCourseMoment(TimeSlot slot)
     {
         if (Status != States.FINALISED)
         {
-            if (Planning.Contains(ct))
-            {
-                var start = ct.StartTime;
-                var end = ct.EndTime;
-                while (end <= Duration.EndTime)
-                {
-                    Planning.Remove(CourseTime.From(start, end));
-                    start.AddDays(7.0);
-                    end.AddDays(7.0);
-                }
-            }
-            else
-            {
-                throw new Exception("This is not yet planned in.");
-            }
+            if (!Planning.Remove(slot)) throw new Exception("This is not yet planned in.");
         }
-        else
-        {
-            throw new Exception("Course has been finalised and cannot be altered.");
-        }
+        else throw new Exception("Course has been finalised and cannot be altered.");
     }
 
     public void ConfirmCourse()
@@ -135,8 +85,10 @@ public class Course
         if (this.coach != null) throw new Exception("A coach is already planned in for this course.");
         if (Status != States.CONFIRMED) throw new Exception("Course needs to be CONFIRMED before adding a coach.");
         if (!coach.IsCompetent(RequiredCompetencies)) throw new Exception("The coach does not meet the requirements for teaching this course.");
+        if (Planning.Intersect(coach.bookings).Any()) throw new Exception("Coach is already scheduled in for this time.");
 
         this.coach = coach;
+        coach.BookIn(Planning);
         Status = States.FINALISED;
     }
 }
