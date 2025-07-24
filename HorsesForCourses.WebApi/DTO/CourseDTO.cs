@@ -10,15 +10,3 @@ public class CourseDTO
         End = end;
     }
 }
-/*
-public Course(string name, DateOnly start, DateOnly end)
-    {
-        CourseName = name;
-        Status = States.PENDING;
-        Planning = new();
-        RequiredCompetencies = new();
-        coach = null;
-        StartDate = start;
-        EndDate = end;
-        Id = Guid.NewGuid();
-    }*/

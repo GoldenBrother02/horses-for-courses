@@ -47,7 +47,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/timeslots")]
-    public ActionResult OverwriteCourseMoments(Guid id, [FromBody] List<TimeSlot> NewMoments)
+    public ActionResult OverwriteCourseMoments(Guid id, [FromBody] List<TimeSlotDTO> NewMoments)
     {
         var course = _repository.GetById(id);
         if (course is null) { return NotFound(); }
@@ -56,7 +56,12 @@ public class CourseController : ControllerBase
         //kan lijst niet editen terwijl je loopt, dus maak copy om over te loopen
 
         foreach (var slot in currentSlots) { course.RemoveCourseMoment(slot); }
-        foreach (var slot in NewMoments) { course.AddCourseMoment(slot); }
+
+        foreach (var slot in NewMoments)
+        {
+            var newslot = new TimeSlot(slot.Day, slot.Start, slot.End);
+            course.AddCourseMoment(newslot);
+        }
         //cleared eerst de planning en voegt daarna toe, als de nieuwe overlap hebben en error geven heb je maar een aantal moments
         //van degene die je wou staan in de course, terwijl de geldige vorige lijst al weg is
         return Ok();
