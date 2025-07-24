@@ -27,8 +27,9 @@ public class CourseController : ControllerBase
     [HttpPost]
     public ActionResult RegisterCourse([FromBody] CourseDTO data)
     {
-        _repository.Add(new Course(data.Name!, data.Start, data.End));
-        return Ok();
+        var course = new Course(data.Name!, data.Start, data.End);
+        _repository.Add(course);
+        return Ok(course);
     }
 
     [HttpPost("{id}/skills")]
@@ -37,7 +38,10 @@ public class CourseController : ControllerBase
         var course = _repository.GetById(id);
         if (course is null) { return NotFound(); }
 
-        foreach (var req in course.RequiredCompetencies) { course.RemoveRequirement(req); }
+        var currentSkills = course.RequiredCompetencies.ToList();
+        //kan lijst niet editen terwijl je loopt, dus maak copy om over te loopen
+
+        foreach (var req in currentSkills) { course.RemoveRequirement(req); }
         foreach (var req in NewSkills) { course.AddRequirement(req); }
         return Ok();
     }
@@ -48,7 +52,10 @@ public class CourseController : ControllerBase
         var course = _repository.GetById(id);
         if (course is null) { return NotFound(); }
 
-        foreach (var slot in course.Planning) { course.RemoveCourseMoment(slot); }
+        var currentSlots = course.Planning.ToList();
+        //kan lijst niet editen terwijl je loopt, dus maak copy om over te loopen
+
+        foreach (var slot in currentSlots) { course.RemoveCourseMoment(slot); }
         foreach (var slot in NewMoments) { course.AddCourseMoment(slot); }
         //cleared eerst de planning en voegt daarna toe, als de nieuwe overlap hebben en error geven heb je maar een aantal moments
         //van degene die je wou staan in de course, terwijl de geldige vorige lijst al weg is
@@ -65,7 +72,7 @@ public class CourseController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("{id}/assign-coach")]
+    [HttpPost("{CourseId}/assign-coach")]
     public ActionResult AddCoach(Guid CourseId, Guid CoachId)
     {
         var course = _repository.GetById(CourseId);

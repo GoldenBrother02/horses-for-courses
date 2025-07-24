@@ -25,8 +25,9 @@ public class CoachController : ControllerBase
     [HttpPost]
     public ActionResult RegisterCoach([FromBody] CoachDTO data)
     {
-        _repository.Add(new Coach(data.Name!, data.Email!));
-        return Ok();
+        var coach = new Coach(data.Name!, data.Email!);
+        _repository.Add(coach);
+        return Ok(coach);
     }
 
     [HttpPost("{id}/skills")]
@@ -35,8 +36,13 @@ public class CoachController : ControllerBase
         var coach = _repository.GetById(id);
         if (coach is null) { return NotFound(); }
 
-        foreach (var skill in coach.competencies) { coach.RemoveCompetence(skill); }
+        var currentSkills = coach.competencies.ToList();
+        //kan lijst niet editen terwijl je loopt, dus maak copy om over te loopen
+
+        foreach (var skill in currentSkills) { coach.RemoveCompetence(skill); }
         foreach (var skill in NewSkills) { coach.AddCompetence(skill); }
+
         return Ok();
     }
+
 }
