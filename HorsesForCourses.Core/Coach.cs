@@ -16,11 +16,14 @@ public class Coach
 
     public EmailAddress Email { get; set; }
 
+    public Guid Id { get; private set; }
+
 
     public Coach(string name, string mail)
     {
         Name = name;
         Email = EmailAddress.From(mail);
+        Id = Guid.NewGuid();
     }
 
     public void AddCompetence(string comp)

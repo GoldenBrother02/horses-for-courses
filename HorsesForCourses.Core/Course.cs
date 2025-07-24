@@ -23,6 +23,8 @@ public class Course
 
     public Coach? coach { get; set; }
 
+    public Guid Id { get; private set; }
+
     public Course(string name, DateOnly start, DateOnly end)
     {
         CourseName = name;
@@ -32,6 +34,7 @@ public class Course
         coach = null;
         StartDate = start;
         EndDate = end;
+        Id = Guid.NewGuid();
     }
 
     public void AddRequirement(string req)
