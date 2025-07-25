@@ -53,11 +53,16 @@ public class BookingTest
         var start4 = new DateOnly(2024, 1, 1);
         var end4 = new DateOnly(2026, 1, 1);
 
+        var start5 = new DateOnly(2025, 8, 8);
+        var end5 = new DateOnly(2025, 10, 9);
+
         var book = Booking.From(planning, start, end);
         var book1 = Booking.From(planning, start1, end1);
         var book2 = Booking.From(planning, start2, end2);
         var book3 = Booking.From(planning, start3, end3);
         var book4 = Booking.From(planning, start4, end4);
+        var book5 = Booking.From(planning, start5, end5);
+        var book6 = Booking.From(planning, start2, end3);
 
         Assert.False(booking.BookingOverlap(book)); //no overlap
         Assert.True(booking.BookingOverlap(book1)); //early overlap
@@ -65,5 +70,22 @@ public class BookingTest
         Assert.True(booking.BookingOverlap(book3)); //inside
         Assert.True(booking.BookingOverlap(book4)); //outside
         Assert.True(booking.BookingOverlap(booking)); //equal
+
+        Assert.True(booking.BookingOverlap(book5)); //same start, done later
+        Assert.True(booking.BookingOverlap(book6));
+    }
+
+    [Fact]
+    public void Overlaps_on_friday()
+    {
+        var bookingOne = Booking.From([TimeSlot.From(DayOfWeek.Friday, new TimeOnly(9, 0), new TimeOnly(17, 0))],
+            new DateOnly(2025, 7, 21),
+            new DateOnly(2025, 7, 25));
+
+        var bookingTwo = Booking.From([TimeSlot.From(DayOfWeek.Friday, new TimeOnly(9, 0), new TimeOnly(17, 0))],
+            new DateOnly(2025, 7, 25),
+            new DateOnly(2025, 7, 31));
+
+        Assert.True(bookingOne.BookingOverlap(bookingTwo));
     }
 }
