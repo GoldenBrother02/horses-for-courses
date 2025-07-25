@@ -89,4 +89,10 @@ public class CourseController : ControllerBase
         course.AddCoach(coach);
         return Ok();
     }
+
+    [HttpGet]
+    public ActionResult GetAllCourses()
+    {
+        return Ok(_repository.GetAll());
+    }
 }

@@ -13,4 +13,9 @@ public class InMemoryCoachRepository
     {
         return _coaches.TryGetValue(id, out var coach) ? coach : null;
     }
+
+    public List<Coach> GetAll()
+    {
+        return _coaches.Values.ToList();
+    }
 }

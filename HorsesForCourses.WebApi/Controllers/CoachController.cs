@@ -45,4 +45,9 @@ public class CoachController : ControllerBase
         return Ok();
     }
 
+    [HttpGet]
+    public ActionResult GetAllCoaches()
+    {
+        return Ok(_repository.GetAll());
+    }
 }
