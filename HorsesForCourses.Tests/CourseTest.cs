@@ -1,3 +1,4 @@
+using System.Net;
 using HorsesForCourses.Core;
 
 namespace HorsesForCourses.Tests;
@@ -5,134 +6,174 @@ namespace HorsesForCourses.Tests;
 public class CourseTest
 {
     Course course;
+
+    public DateOnly coursestart;
+
+    public DateOnly courseend;
+
+    public Coach coach;
+    public Coach coach2;
+
     public CourseTest()
     {
-        course = new Course("Appraising Lady Miyabi's magnificence", new DateOnly(2025, 11, 07), new DateOnly(2025, 12, 31));
-        var start = new DateOnly(2025, 11, 07);
+        coursestart = new DateOnly(2025, 7, 11);
+        courseend = new DateOnly(2025, 11, 11);
+        course = new Course("Programming 1", coursestart, courseend);
+        coach = new Coach("Mark", "mark@skynet.com");
+        coach2 = new Coach("Benny", "benny@skynet.com");
     }
 
     [Fact]
-    public void MakeCourse()
+    public void Make_A_Course()
     {
-        Assert.Equal("Appraising Lady Miyabi's magnificence", course.CourseName);
-        Assert.Equal(new DateOnly(2025, 11, 07), course.StartDate);
-        Assert.Equal(new DateOnly(2025, 12, 31), course.EndDate);
+        Assert.Equal("Programming 1", course.CourseName);
+        Assert.Equal(coursestart, course.StartDate);
+        Assert.Equal(courseend, course.EndDate);
     }
 
     [Fact]
-    public void AddRequirementsTest()
+    public void Adding_Requirements()
     {
-        course.AddRequirement("Eyes");
-        Assert.Contains("Eyes", course.RequiredCompetencies);
+        course.AddRequirement("Javascript");
+        course.AddRequirement("HTML");
+        course.AddRequirement("CSS");
 
-        var exception = Assert.Throws<Exception>(() => course.AddRequirement("Eyes"));
+        Assert.Contains("Javascript", course.RequiredCompetencies);
+
+        var exception = Assert.Throws<Exception>(() => course.AddRequirement("Javascript"));
         Assert.Equal("This required competence is already added.", exception.Message);
     }
 
     [Fact]
-    public void RemoveRequirementTest()
+    public void Removing_Requirements()
     {
-        var exception = Assert.Throws<Exception>(() => course.RemoveRequirement("Eyes"));
+        course.AddRequirement("Javascript");
+        course.AddRequirement("HTML");
+        course.AddRequirement("CSS");
+
+        course.RemoveRequirement("CSS");
+        Assert.DoesNotContain("CSS", course.RequiredCompetencies);
+
+        var exception = Assert.Throws<Exception>(() => course.RemoveRequirement("C#"));
         Assert.Equal("This course does not have this requirement.", exception.Message);
-
-        course.AddRequirement("Eyes");
-        Assert.Contains("Eyes", course.RequiredCompetencies);
-
-        course.RemoveRequirement("Eyes");
-        Assert.Empty(course.RequiredCompetencies);
     }
 
     [Fact]
-    public void AddCourseMomentTest()
+    public void Adding_CourseMoment()
     {
-        var test = TimeSlot.From(DayOfWeek.Tuesday, new TimeOnly(10, 0), new TimeOnly(11, 0));
-        course.AddCourseMoment(test);
-        Assert.Contains(test, course.Planning);
+        var slot = TimeSlot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0));
+        course.AddCourseMoment(slot);
+        Assert.Contains(slot, course.Planning);
 
-        var exception = Assert.Throws<Exception>(() => course.AddCourseMoment(test));
+        var slot2 = TimeSlot.From(DayOfWeek.Monday, new TimeOnly(10, 0), new TimeOnly(12, 0));
+        var exception = Assert.Throws<Exception>(() => course.AddCourseMoment(slot2));
         Assert.Equal("There is overlap between the time slots.", exception.Message);
     }
 
     [Fact]
-    public void RemoveCourseMomentTest()
+    public void Removing_CourseMoment()
     {
-        var test = TimeSlot.From(DayOfWeek.Tuesday, new TimeOnly(10, 0), new TimeOnly(11, 0));
-        var exception = Assert.Throws<Exception>(() => course.RemoveCourseMoment(test));
+        var slot = TimeSlot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0));
+        course.AddCourseMoment(slot);
+        Assert.Contains(slot, course.Planning);
+
+        course.RemoveCourseMoment(slot);
+        Assert.DoesNotContain(slot, course.Planning);
+
+        var slot2 = TimeSlot.From(DayOfWeek.Tuesday, new TimeOnly(10, 0), new TimeOnly(12, 0));
+        var exception = Assert.Throws<Exception>(() => course.RemoveCourseMoment(slot2));
         Assert.Equal("This is not yet planned in.", exception.Message);
-
-        course.AddCourseMoment(test);
-        Assert.Contains(test, course.Planning);
-
-        course.RemoveCourseMoment(test);
-        Assert.Empty(course.Planning);
     }
 
     [Fact]
-    public void ConfirmCourseTest()
+    public void Confirming_Course()
     {
-        var test = TimeSlot.From(DayOfWeek.Tuesday, new TimeOnly(10, 0), new TimeOnly(11, 0));
-
         var exception = Assert.Throws<Exception>(() => course.ConfirmCourse());
         Assert.Equal("Cannot confirm a course that does not have a planning yet.", exception.Message);
 
-        course.AddCourseMoment(test);
-        course.ConfirmCourse();
+        var slot = TimeSlot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0));
+        course.AddCourseMoment(slot);
 
+        course.ConfirmCourse();
         var exception2 = Assert.Throws<Exception>(() => course.ConfirmCourse());
-        Assert.Equal("Cannot confirm a course that's not in the PENDING state, the current status is CONFIRMED", exception2.Message);
+        Assert.Equal("Cannot confirm a course that's not in the PENDING state, current state is: CONFIRMED.", exception2.Message);
     }
 
     [Fact]
-    public void AddCoachTest()
+    public void Adding_A_Coach()
     {
-        var Benny = new Coach("Benny", "Benny@buddy.com");
-        var Mark = new Coach("Mark", "Mark@gmail.com");
-        var test = TimeSlot.From(DayOfWeek.Tuesday, new TimeOnly(10, 0), new TimeOnly(11, 0));
-        var list = new List<TimeSlot>() { test };
+        var exception1 = Assert.Throws<Exception>(() => course.AddCoach(coach));
+        Assert.Equal("Course needs to be CONFIRMED before adding a coach.", exception1.Message);
 
-        Mark.BookIn(list);
-        Mark.AddCompetence("Eyes");
-        Mark.AddCompetence("Taste");
+        course.AddRequirement("Javascript");
+        course.AddRequirement("HTML");
+        course.AddRequirement("CSS");
 
-        var exception = Assert.Throws<Exception>(() => course.AddCoach(Benny));
-        Assert.Equal("Course needs to be CONFIRMED before adding a coach.", exception.Message);
+        var slot = TimeSlot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0));
+        course.AddCourseMoment(slot);
 
-        course.AddRequirement("Eyes");
-        course.AddRequirement("Taste");
-        course.AddCourseMoment(test);
         course.ConfirmCourse();
-
-        Benny.AddCompetence("Eyes");
-
-        var exception2 = Assert.Throws<Exception>(() => course.AddCoach(Benny));
+        var exception2 = Assert.Throws<Exception>(() => course.AddCoach(coach));
         Assert.Equal("The coach does not meet the requirements for teaching this course.", exception2.Message);
 
-        Benny.AddCompetence("Taste");
+        coach.AddCompetence("Javascript");
+        coach.AddCompetence("HTML");
+        coach.AddCompetence("CSS");
 
-        var exception3 = Assert.Throws<Exception>(() => course.AddCoach(Mark));
-        Assert.Equal("Coach is already scheduled in for this time.", exception3.Message);
+        var planning = new List<TimeSlot> { slot };
+        var startdate3 = new DateOnly(2025, 8, 8);
+        var enddate3 = new DateOnly(2026, 8, 8);
 
-        course.AddCoach(Benny);
-        Assert.Equal(course.coach, Benny);
+        var booking = Booking.From(planning, startdate3, enddate3);
 
-        var exception4 = Assert.Throws<Exception>(() => course.AddCoach(Benny));
+        coach.BookIn(booking);
+        var exception3 = Assert.Throws<Exception>(() => course.AddCoach(coach));
+        Assert.Equal("Coach's schedule does not match with this planning.", exception3.Message);
+
+        coach2.AddCompetence("Javascript");
+        coach2.AddCompetence("HTML");
+        coach2.AddCompetence("CSS");
+
+        course.AddCoach(coach2);
+        Assert.Equal("Benny", course.coach!.Name);
+        //Assert.Equal(course.coach, coach);
+    }
+
+    [Fact]
+    public void After_FINALISED_No_Further_Adjustments_Possible()
+    {
+        course.AddRequirement("Javascript");
+        course.AddRequirement("HTML");
+        course.AddRequirement("CSS");
+
+        var slot = TimeSlot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(11, 0));
+        course.AddCourseMoment(slot);
+
+        course.ConfirmCourse();
+
+        coach.AddCompetence("Javascript");
+        coach.AddCompetence("HTML");
+        coach.AddCompetence("CSS");
+
+        course.AddCoach(coach);
+
+        var exception1 = Assert.Throws<Exception>(() => course.AddRequirement("Python"));
+        Assert.Equal("Course has been finalised and cannot be altered.", exception1.Message);
+
+        var exception2 = Assert.Throws<Exception>(() => course.RemoveRequirement("Python"));
+        Assert.Equal("Course has been finalised and cannot be altered.", exception2.Message);
+
+        var exception3 = Assert.Throws<Exception>(() => course.AddCourseMoment(slot));
+        Assert.Equal("Course has been finalised and cannot be altered.", exception3.Message);
+
+        var exception4 = Assert.Throws<Exception>(() => course.RemoveCourseMoment(slot));
         Assert.Equal("Course has been finalised and cannot be altered.", exception4.Message);
 
+        var exception5 = Assert.Throws<Exception>(() => course.ConfirmCourse());
+        Assert.Equal("Cannot confirm a course that's not in the PENDING state, current state is: FINALISED.", exception5.Message);
 
+        var exception6 = Assert.Throws<Exception>(() => course.AddCoach(coach));
+        Assert.Equal("Course has been finalised and cannot be altered.", exception6.Message);
 
-        var FinalException = Assert.Throws<Exception>(() => course.AddCoach(Benny));
-        Assert.Equal("Course has been finalised and cannot be altered.", FinalException.Message);
-
-        var exception5 = Assert.Throws<Exception>(() => course.AddRequirement("test"));
-        Assert.Equal("Course has been finalised and cannot be altered.", FinalException.Message);
-
-        var exception6 = Assert.Throws<Exception>(() => course.RemoveRequirement("test"));
-        Assert.Equal("Course has been finalised and cannot be altered.", FinalException.Message);
-
-        var exception7 = Assert.Throws<Exception>(() => course.AddCourseMoment(test));
-        Assert.Equal("Course has been finalised and cannot be altered.", FinalException.Message);
-
-        var exception8 = Assert.Throws<Exception>(() => course.RemoveCourseMoment(test));
-        Assert.Equal("Course has been finalised and cannot be altered.", FinalException.Message);
     }
 }

@@ -4,19 +4,18 @@ namespace HorsesForCourses.Core;
 
 public class Coach
 {
+    public Guid Id { get; private set; }
     private List<string> Competencies = new();
 
     public IReadOnlyList<string> competencies => Competencies;
 
-    private List<TimeSlot> Bookings = new();
+    private List<Booking> Bookings = new();
 
-    public IReadOnlyList<TimeSlot> bookings => Bookings;
+    public IReadOnlyList<Booking> bookings => Bookings;
 
-    public string Name { get; set; }
+    public string Name { get; }
 
-    public EmailAddress Email { get; set; }
-
-    public Guid Id { get; private set; }
+    public EmailAddress Email { get; }
 
 
     public Coach(string name, string mail)
@@ -28,19 +27,23 @@ public class Coach
 
     public void AddCompetence(string comp)
     {
-        if (!Competencies.Contains(comp)) { Competencies.Add(comp); }
-        else throw new Exception("Coach already has this competence.");
+        if (!Competencies.Contains(comp))
+        {
+            Competencies.Add(comp);
+        }
+        else
+            throw new Exception($"Coach {Name} already has this competence.");
     }
 
     public void RemoveCompetence(string comp)
     {
-        if (!Competencies.Remove(comp)) { throw new Exception("Coach does not have this competence."); }
+        if (!Competencies.Remove(comp)) { throw new Exception($"Coach {Name} does not have this competence."); }
     }
 
-    public void BookIn(List<TimeSlot> list)
+    public void BookIn(Booking newbooking)
     {
-        if (!bookings.Any(booking => list.Any(slot => booking.Overlap(slot)))) { Bookings.AddRange(list); }
-        else throw new Exception("Coach cannot be booked on already booked timeslots.");
+        if (!Bookings.Any(booking => booking.BookingOverlap(newbooking))) { Bookings.Add(newbooking); }
+        else throw new Exception("Coach's schedule does not match with this planning.");
     }
 
     public bool IsCompetent(List<string> requirements)

@@ -9,21 +9,20 @@ public enum States
 
 public class Course
 {
+    public Guid Id { get; private set; }
     public string CourseName { get; set; }
 
     private States Status;
 
-    public List<string> RequiredCompetencies { get; set; }
+    public List<string> RequiredCompetencies { get; }
 
-    public List<TimeSlot> Planning { get; set; }
+    public List<TimeSlot> Planning { get; }
 
     public DateOnly StartDate { get; }
 
     public DateOnly EndDate { get; }
 
-    public Coach? coach { get; set; }
-
-    public Guid Id { get; private set; }
+    public Coach? coach;
 
     public Course(string name, DateOnly start, DateOnly end)
     {
@@ -37,14 +36,18 @@ public class Course
         Id = Guid.NewGuid();
     }
 
+
+
     public void AddRequirement(string req)
     {
         if (Status != States.FINALISED)
         {
             if (!RequiredCompetencies.Contains(req)) { RequiredCompetencies.Add(req); }
-            else throw new Exception("This required competence is already added.");
+            else
+                throw new Exception("This required competence is already added.");
         }
-        else throw new Exception("Course has been finalised and cannot be altered.");
+        else
+            throw new Exception("Course has been finalised and cannot be altered.");
     }
 
     public void RemoveRequirement(string req)
@@ -53,31 +56,35 @@ public class Course
         {
             if (!RequiredCompetencies.Remove(req)) { throw new Exception("This course does not have this requirement."); }
         }
-        else throw new Exception("Course has been finalised and cannot be altered.");
+        else
+            throw new Exception("Course has been finalised and cannot be altered.");
     }
 
     public void AddCourseMoment(TimeSlot slot)
     {
         if (Status != States.FINALISED)
         {
-            if (!Planning.Any(plan => plan.Overlap(slot))) { Planning.Add(slot); }
-            else throw new Exception("There is overlap between the time slots.");
+            if (!Planning.Any(p => p.Overlap(slot))) { Planning.Add(slot); }
+            else
+                throw new Exception("There is overlap between the time slots.");
         }
-        else throw new Exception("Course has been finalised and cannot be altered.");
+        else
+            throw new Exception("Course has been finalised and cannot be altered.");
     }
 
     public void RemoveCourseMoment(TimeSlot slot)
     {
         if (Status != States.FINALISED)
         {
-            if (!Planning.Remove(slot)) throw new Exception("This is not yet planned in.");
+            if (!Planning.Remove(slot)) { throw new Exception("This is not yet planned in."); }
         }
-        else throw new Exception("Course has been finalised and cannot be altered.");
+        else
+            throw new Exception("Course has been finalised and cannot be altered.");
     }
 
     public void ConfirmCourse()
     {
-        if (Status != States.PENDING) throw new Exception($"Cannot confirm a course that's not in the PENDING state, the current status is {Status}");
+        if (Status != States.PENDING) throw new Exception($"Cannot confirm a course that's not in the PENDING state, current state is: {Status}.");
         if (Planning.Count == 0) throw new Exception("Cannot confirm a course that does not have a planning yet.");
 
         Status = States.CONFIRMED;
@@ -89,12 +96,14 @@ public class Course
         {
             if (Status == States.PENDING) throw new Exception("Course needs to be CONFIRMED before adding a coach.");
             if (!coach.IsCompetent(RequiredCompetencies)) throw new Exception("The coach does not meet the requirements for teaching this course.");
-            if (Planning.Intersect(coach.bookings).Any()) throw new Exception("Coach is already scheduled in for this time.");
+            //if (Planning.Intersect(coach.bookings).Any()) throw new Exception("The coach's schedule does not match the planning of the course.");
 
             this.coach = coach;
-            coach.BookIn(Planning);
+            var newbooking = new Booking(Planning, StartDate, EndDate);
+            coach.BookIn(newbooking);
             Status = States.FINALISED;
         }
-        else throw new Exception("Course has been finalised and cannot be altered.");
+        else
+            throw new Exception("Course has been finalised and cannot be altered.");
     }
 }
