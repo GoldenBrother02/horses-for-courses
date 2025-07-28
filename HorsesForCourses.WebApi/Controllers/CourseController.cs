@@ -18,10 +18,10 @@ public class CourseController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Course> GetById(Guid id)
+    public ActionResult<CourseDTO> GetById(Guid id)
     {
         var course = _repository.GetById(id);
-        return course is null ? NotFound() : Ok(course);
+        return course is null ? NotFound() : Ok(new CourseDTO(course.CourseName, course.StartDate, course.EndDate));
     }
 
     [HttpPost]
@@ -29,7 +29,7 @@ public class CourseController : ControllerBase
     {
         var course = new Course(data.Name!, data.Start, data.End);
         _repository.Add(course);
-        return Ok(course);
+        return Ok(course.Id);
     }
 
     [HttpPost("{id}/skills")]
@@ -63,7 +63,7 @@ public class CourseController : ControllerBase
             course.AddCourseMoment(newslot);
         }
         //cleared eerst de planning en voegt daarna toe, als de nieuwe overlap hebben en error geven heb je maar een aantal moments
-        //van degene die je wou staan in de course, terwijl de geldige vorige lijst al weg is
+        //van degene die je wou staan in de course, terwijl de geldige vorige lijst al weg is?
         return Ok();
     }
 

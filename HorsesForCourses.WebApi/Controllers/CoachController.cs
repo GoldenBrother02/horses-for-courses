@@ -16,10 +16,10 @@ public class CoachController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Coach> GetById(Guid id)
+    public ActionResult<CoachDTO> GetById(Guid id)
     {
         var coach = _repository.GetById(id);
-        return coach is null ? NotFound() : Ok(coach);
+        return coach is null ? NotFound() : Ok(new CoachDTO(coach.Name, coach.Email.Value.ToString(), coach.competencies.ToList()));
     }
 
     [HttpPost]
@@ -27,7 +27,7 @@ public class CoachController : ControllerBase
     {
         var coach = new Coach(data.Name!, data.Email!);
         _repository.Add(coach);
-        return Ok(coach);
+        return Ok(coach.Id);
     }
 
     [HttpPost("{id}/skills")]

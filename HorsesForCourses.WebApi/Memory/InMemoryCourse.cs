@@ -14,8 +14,13 @@ public class InMemoryCourseRepository
         return _courses.TryGetValue(id, out var coach) ? coach : null;
     }
 
-    public List<Course> GetAll()
+    public List<CourseDTO> GetAll()
     {
-        return _courses.Values.ToList();
+        var list = new List<CourseDTO>();
+        foreach (var course in _courses.Values)
+        {
+            list.Add(new CourseDTO(course.CourseName, course.StartDate, course.EndDate));
+        }
+        return list;
     }
 }
