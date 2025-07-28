@@ -106,4 +106,16 @@ public class Course
         else
             throw new Exception("Course has been finalised and cannot be altered.");
     }
+
+    public void OverwriteRequirements(List<string> newReqs)
+    {
+        foreach (var skill in RequiredCompetencies) { RemoveRequirement(skill); }
+        foreach (var skill in newReqs) { AddRequirement(skill); }
+    }
+
+    public void OverwriteMoments(List<TimeSlot> NewMoments)
+    {
+        foreach (var slot in Planning) { RemoveCourseMoment(slot); }
+        foreach (var slot in NewMoments) { AddCourseMoment(slot); }
+    }
 }

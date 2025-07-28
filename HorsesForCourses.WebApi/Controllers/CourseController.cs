@@ -38,11 +38,7 @@ public class CourseController : ControllerBase
         var course = _repository.GetById(id);
         if (course is null) { return NotFound(); }
 
-        var currentSkills = course.RequiredCompetencies.ToList();
-        //kan lijst niet editen terwijl je loopt, dus maak copy om over te loopen
-
-        foreach (var req in currentSkills) { course.RemoveRequirement(req); }
-        foreach (var req in NewSkills) { course.AddRequirement(req); }
+        course.OverwriteRequirements(NewSkills);
         return Ok();
     }
 
@@ -52,18 +48,16 @@ public class CourseController : ControllerBase
         var course = _repository.GetById(id);
         if (course is null) { return NotFound(); }
 
-        var currentSlots = course.Planning.ToList();
-        //kan lijst niet editen terwijl je loopt, dus maak copy om over te loopen
-
-        foreach (var slot in currentSlots) { course.RemoveCourseMoment(slot); }
+        var list = new List<TimeSlot>();
 
         foreach (var slot in NewMoments)
         {
             var newslot = new TimeSlot(slot.Day, slot.Start, slot.End);
-            course.AddCourseMoment(newslot);
+            list.Add(newslot);
         }
-        //cleared eerst de planning en voegt daarna toe, als de nieuwe overlap hebben en error geven heb je maar een aantal moments
-        //van degene die je wou staan in de course, terwijl de geldige vorige lijst al weg is?
+
+        course.OverwriteMoments(list);
+
         return Ok();
     }
 

@@ -36,11 +36,7 @@ public class CoachController : ControllerBase
         var coach = _repository.GetById(id);
         if (coach is null) { return NotFound(); }
 
-        var currentSkills = coach.competencies.ToList();
-        //kan lijst niet editen terwijl je loopt, dus maak copy om over te loopen
-
-        foreach (var skill in currentSkills) { coach.RemoveCompetence(skill); }
-        foreach (var skill in NewSkills) { coach.AddCompetence(skill); }
+        coach.OverwriteCompetenties(NewSkills);
 
         return Ok();
     }

@@ -52,4 +52,10 @@ public class Coach
 
         return competent;
     }
+
+    public void OverwriteCompetenties(List<string> newComps)
+    {
+        foreach (var skill in competencies) { RemoveCompetence(skill); }
+        foreach (var skill in newComps) { AddCompetence(skill); }
+    }
 }
