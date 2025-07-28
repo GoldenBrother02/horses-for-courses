@@ -109,13 +109,19 @@ public class Course
 
     public void OverwriteRequirements(List<string> newReqs)
     {
-        foreach (var skill in RequiredCompetencies) { RemoveRequirement(skill); }
-        foreach (var skill in newReqs) { AddRequirement(skill); }
+        if (Status != States.FINALISED)
+        {
+            foreach (var skill in RequiredCompetencies) { RemoveRequirement(skill); }
+            foreach (var skill in newReqs) { AddRequirement(skill); }
+        }
     }
 
     public void OverwriteMoments(List<TimeSlot> NewMoments)
     {
-        foreach (var slot in Planning) { RemoveCourseMoment(slot); }
-        foreach (var slot in NewMoments) { AddCourseMoment(slot); }
+        if (Status != States.FINALISED)
+        {
+            foreach (var slot in Planning) { RemoveCourseMoment(slot); }
+            foreach (var slot in NewMoments) { AddCourseMoment(slot); }
+        }
     }
 }
