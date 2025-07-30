@@ -1,3 +1,4 @@
+using HorsesForCourses.WebApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Serilog;
