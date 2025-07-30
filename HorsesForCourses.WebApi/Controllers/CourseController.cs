@@ -10,30 +10,36 @@ public class CourseController : ControllerBase
 {
     private readonly InMemoryCourseRepository _repository;
     private readonly InMemoryCoachRepository _coaches;
+    private readonly TimeSlotMapper _timeSlotDTOMap;
+    private readonly CourseMapper _courseMap;
+    private readonly CoachMapper _coachMap;
 
-    public CourseController(InMemoryCourseRepository repository, InMemoryCoachRepository coaches)
+    public CourseController(InMemoryCourseRepository repository, InMemoryCoachRepository coaches, TimeSlotMapper timeSlotMap, CourseMapper courseMap, CoachMapper coachMap)
     {
         _repository = repository;
         _coaches = coaches;
+        _timeSlotDTOMap = timeSlotMap;
+        _courseMap = courseMap;
+        _coachMap = coachMap;
     }
 
     [HttpGet("{id}")]
-    public ActionResult<CourseDTO> GetById(Guid id)
+    public ActionResult<CourseDTO> GetById(int id)
     {
         var course = _repository.GetById(id);
-        return course is null ? NotFound() : Ok(new CourseDTO(course.CourseName, course.StartDate, course.EndDate));
+        return course is null ? NotFound() : Ok(new CourseDTO(course.CourseName, course.StartDate, course.EndDate, course.Id, course.RequiredCompetencies, _timeSlotDTOMap.Revert(course.Planning.ToList()), _coachMap.CoachToIdName(course.coach!)));
     }
 
     [HttpPost]
-    public ActionResult RegisterCourse([FromBody] CourseDTO data)
+    public ActionResult RegisterCourse([FromBody] PostCourse post)
     {
-        var course = new Course(data.Name!, data.Start, data.End);
+        var course = _courseMap.PostToCourse(post, _repository.NewId());
         _repository.Add(course);
         return Ok(course.Id);
     }
 
     [HttpPost("{id}/skills")]
-    public ActionResult OverwriteRequirements(Guid id, [FromBody] List<string> NewSkills)
+    public ActionResult OverwriteRequirements(int id, [FromBody] List<string> NewSkills)
     {
         var course = _repository.GetById(id);
         if (course is null) { return NotFound(); }
@@ -43,18 +49,12 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/timeslots")]
-    public ActionResult OverwriteCourseMoments(Guid id, [FromBody] List<TimeSlotDTO> NewMoments)
+    public ActionResult OverwriteCourseMoments(int id, [FromBody] List<TimeSlotDTO> NewMoments)
     {
         var course = _repository.GetById(id);
         if (course is null) { return NotFound(); }
 
-        var list = new List<TimeSlot>();
-
-        foreach (var slot in NewMoments)
-        {
-            var newslot = new TimeSlot(slot.Day, slot.Start, slot.End);
-            list.Add(newslot);
-        }
+        var list = _timeSlotDTOMap.Map(NewMoments);
 
         course.OverwriteMoments(list);
 
@@ -62,7 +62,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{id}/confirm")]
-    public ActionResult ConfirmCourse(Guid id)
+    public ActionResult ConfirmCourse(int id)
     {
         var course = _repository.GetById(id);
         if (course is null) { return NotFound(); }
@@ -72,7 +72,7 @@ public class CourseController : ControllerBase
     }
 
     [HttpPost("{CourseId}/assign-coach")]
-    public ActionResult AddCoach(Guid CourseId, Guid CoachId)
+    public ActionResult AddCoach(int CourseId, int CoachId)
     {
         var course = _repository.GetById(CourseId);
         if (course is null) { return NotFound(); }

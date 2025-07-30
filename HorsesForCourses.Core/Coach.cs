@@ -1,10 +1,12 @@
 using System.Diagnostics.Contracts;
+using System.Dynamic;
 
 namespace HorsesForCourses.Core;
 
 public class Coach
 {
-    public Guid Id { get; private set; }
+    public int Id { get; private set; }
+
     private List<string> Competencies = new();
 
     public IReadOnlyList<string> competencies => Competencies;
@@ -17,12 +19,15 @@ public class Coach
 
     public EmailAddress Email { get; }
 
+    public List<Course> CourseList { get; private set; }
 
-    public Coach(string name, string mail)
+
+    public Coach(int id, string name, string mail)
     {
         Name = name;
         Email = EmailAddress.From(mail);
-        Id = Guid.NewGuid();
+        Id = id;
+        CourseList = new();
     }
 
     public void AddCompetence(string comp)
@@ -57,5 +62,10 @@ public class Coach
     {
         foreach (var skill in competencies) { RemoveCompetence(skill); }
         foreach (var skill in newComps) { AddCompetence(skill); }
+    }
+
+    public void AddCourse(Course course)
+    {
+        CourseList.Add(course);
     }
 }

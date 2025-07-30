@@ -2,25 +2,31 @@ using HorsesForCourses.Core;
 
 public class InMemoryCourseRepository
 {
-    private readonly Dictionary<Guid, Course> _courses = new();
+    private readonly Dictionary<int, Course> _courses = new();
+    private int NextId = 0;
 
     public void Add(Course course)
     {
         _courses[course.Id] = course;
     }
 
-    public Course? GetById(Guid id)
+    public Course? GetById(int id)
     {
         return _courses.TryGetValue(id, out var coach) ? coach : null;
     }
 
-    public List<CourseDTO> GetAll()
+    public List<GetCourse> GetAll()
     {
-        var list = new List<CourseDTO>();
+        var list = new List<GetCourse>();
         foreach (var course in _courses.Values)
         {
-            list.Add(new CourseDTO(course.CourseName, course.StartDate, course.EndDate));
+            list.Add(new GetCourse(course.CourseName, course.StartDate, course.EndDate, course.Id, course.Planning.Any(), course.coach is not null));
         }
         return list;
+    }
+
+    public int NewId()
+    {
+        return NextId++;
     }
 }

@@ -12,6 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<InMemoryCoachRepository>();
 builder.Services.AddSingleton<InMemoryCourseRepository>();
+builder.Services.AddSingleton<CoachMapper>();
+builder.Services.AddSingleton<CourseMapper>();
+builder.Services.AddSingleton<TimeSlotMapper>();
 
 builder.Services.AddSwaggerGen(options =>
 {

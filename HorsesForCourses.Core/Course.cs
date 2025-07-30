@@ -9,7 +9,7 @@ public enum States
 
 public class Course
 {
-    public Guid Id { get; private set; }
+    public int Id { get; private set; }
     public string CourseName { get; set; }
 
     private States Status;
@@ -24,7 +24,7 @@ public class Course
 
     public Coach? coach;
 
-    public Course(string name, DateOnly start, DateOnly end)
+    public Course(int id, string name, DateOnly start, DateOnly end)
     {
         CourseName = name;
         Status = States.PENDING;
@@ -33,7 +33,7 @@ public class Course
         coach = null;
         StartDate = start;
         EndDate = end;
-        Id = Guid.NewGuid();
+        Id = id;
     }
 
 
@@ -101,6 +101,7 @@ public class Course
             this.coach = coach;
             var newbooking = new Booking(Planning, StartDate, EndDate);
             coach.BookIn(newbooking);
+            coach.AddCourse(this);
             Status = States.FINALISED;
         }
         else

@@ -9,29 +9,33 @@ namespace MyLittleWebApi.Exercise.Controllers;
 public class CoachController : ControllerBase
 {
     private readonly InMemoryCoachRepository _repository;
+    private readonly CoachMapper _coachMap;
+    private readonly CourseMapper _courseMap;
 
-    public CoachController(InMemoryCoachRepository repository)
+    public CoachController(InMemoryCoachRepository repository, CoachMapper coachMap, CourseMapper coursemap)
     {
         _repository = repository;
+        _coachMap = coachMap;
+        _courseMap = coursemap;
     }
 
     [HttpGet("{id}")]
-    public ActionResult<CoachDTO> GetById(Guid id)
+    public ActionResult<CoachDTO> GetById(int id)
     {
         var coach = _repository.GetById(id);
-        return coach is null ? NotFound() : Ok(new CoachDTO(coach.Name, coach.Email.Value.ToString(), coach.competencies.ToList()));
+        return coach is null ? NotFound() : Ok(new CoachDTO(coach.Id, coach.Name, coach.Email.ToString(), coach.competencies.ToList(), _courseMap.ListToIdName(coach.CourseList)));
     }
 
     [HttpPost]
-    public ActionResult RegisterCoach([FromBody] CoachDTO data)
+    public ActionResult RegisterCoach([FromBody] PostCoach post)
     {
-        var coach = new Coach(data.Name!, data.Email!);
+        var coach = _coachMap.Map(post, _repository.NewId());
         _repository.Add(coach);
         return Ok(coach.Id);
     }
 
     [HttpPost("{id}/skills")]
-    public ActionResult OverwriteSkillset(Guid id, [FromBody] List<string> NewSkills)
+    public ActionResult OverwriteSkillset(int id, [FromBody] List<string> NewSkills)
     {
         var coach = _repository.GetById(id);
         if (coach is null) { return NotFound(); }
