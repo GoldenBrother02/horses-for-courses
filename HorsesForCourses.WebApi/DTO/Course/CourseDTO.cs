@@ -1,3 +1,5 @@
+namespace HorsesForCourses.WebApi;
+
 public class CourseDTO
 {
     public int Id { get; set; }

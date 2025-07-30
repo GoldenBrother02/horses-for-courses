@@ -2,10 +2,18 @@ using System.Reflection.Metadata.Ecma335;
 using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Http.HttpResults;
 
+namespace HorsesForCourses.WebApi;
+
 public class InMemoryCoachRepository
 {
     private readonly Dictionary<int, Coach> _coaches = new();
+    private readonly CoachMapper _coachMap;
     private int NextId = 0;
+
+    public InMemoryCoachRepository(CoachMapper coachmap)
+    {
+        _coachMap = coachmap;
+    }
 
     public void Add(Coach coach)
     {
@@ -22,7 +30,7 @@ public class InMemoryCoachRepository
         var list = new List<GetCoach>();
         foreach (var coach in _coaches.Values)
         {
-            list.Add(new GetCoach(coach.Id, coach.Name, coach.Email.ToString(), coach.CourseList.Count()));
+            list.Add(_coachMap.CoachToGetCoach(coach));
         }
         return list;
     }

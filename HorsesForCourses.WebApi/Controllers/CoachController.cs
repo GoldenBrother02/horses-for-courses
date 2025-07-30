@@ -2,7 +2,7 @@ using System;
 using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MyLittleWebApi.Exercise.Controllers;
+namespace HorsesForCourses.WebApi;
 
 [ApiController]
 [Route("coaches")]

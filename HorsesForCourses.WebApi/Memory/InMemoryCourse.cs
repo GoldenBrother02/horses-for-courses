@@ -1,8 +1,18 @@
 using HorsesForCourses.Core;
 
+namespace HorsesForCourses.WebApi;
+
 public class InMemoryCourseRepository
 {
     private readonly Dictionary<int, Course> _courses = new();
+    private readonly CourseMapper _courseMap;
+
+    public InMemoryCourseRepository(CourseMapper coursemap)
+    {
+        _courseMap = coursemap;
+    }
+
+
     private int NextId = 0;
 
     public void Add(Course course)
@@ -20,7 +30,7 @@ public class InMemoryCourseRepository
         var list = new List<GetCourse>();
         foreach (var course in _courses.Values)
         {
-            list.Add(new GetCourse(course.CourseName, course.StartDate, course.EndDate, course.Id, course.Planning.Any(), course.coach is not null));
+            list.Add(_courseMap.CourseToGetCourse(course));
         }
         return list;
     }

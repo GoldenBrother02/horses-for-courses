@@ -1,3 +1,5 @@
+namespace HorsesForCourses.WebApi;
+
 public class PostCourse
 {
     public string Name { get; set; }

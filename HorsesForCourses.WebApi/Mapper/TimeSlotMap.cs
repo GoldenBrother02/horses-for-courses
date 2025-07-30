@@ -1,5 +1,7 @@
 using HorsesForCourses.Core;
 
+namespace HorsesForCourses.WebApi;
+
 public class TimeSlotMapper
 {
     public List<TimeSlot> Map(List<TimeSlotDTO> DTOs)

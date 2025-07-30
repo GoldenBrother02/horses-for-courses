@@ -1,3 +1,5 @@
+namespace HorsesForCourses.WebApi;
+
 public class TimeSlotDTO
 {
     public DayOfWeek Day { get; set; }

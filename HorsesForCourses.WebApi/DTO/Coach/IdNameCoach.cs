@@ -1,5 +1,7 @@
 using HorsesForCourses.Core;
 
+namespace HorsesForCourses.WebApi;
+
 public class IdNameCoach
 {
     public int Id { get; set; }

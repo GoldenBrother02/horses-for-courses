@@ -1,5 +1,7 @@
 using HorsesForCourses.Core;
 
+namespace HorsesForCourses.WebApi;
+
 public class CourseMapper
 {
     public Course DTOToCourse(CourseDTO DTO)
@@ -19,5 +21,10 @@ public class CourseMapper
     public Course PostToCourse(PostCourse DTO, int id)
     {
         return new Course(id, DTO.Name, DTO.Start, DTO.End);
+    }
+
+    public GetCourse CourseToGetCourse(Course course)
+    {
+        return new GetCourse(course.CourseName, course.StartDate, course.EndDate, course.Id, course.Planning.Any(), course.coach is not null);
     }
 }
