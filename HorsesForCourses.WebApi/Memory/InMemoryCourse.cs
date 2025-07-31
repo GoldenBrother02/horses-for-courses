@@ -12,7 +12,6 @@ public class InMemoryCourseRepository
         _courseMap = coursemap;
     }
 
-
     private int NextId = 0;
 
     public void Add(Course course)

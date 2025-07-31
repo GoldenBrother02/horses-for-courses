@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using HorsesForCourses.WebApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -6,8 +7,14 @@ using Serilog;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//builder.Services.AddControllers();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(null, allowIntegerValues: false));
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -19,6 +26,8 @@ builder.Services.AddSingleton<TimeSlotMapper>();
 
 builder.Services.AddSwaggerGen(options =>
 {
+    options.UseInlineDefinitionsForEnums();
+
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "HorsesForCourses API",

@@ -14,9 +14,9 @@ public class Course
 
     private States Status;
 
-    public List<string> RequiredCompetencies { get; }
+    public List<string> RequiredCompetencies { get; private set; }
 
-    public List<TimeSlot> Planning { get; }
+    public List<TimeSlot> Planning { get; private set; }
 
     public DateOnly StartDate { get; }
 
@@ -112,7 +112,7 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            foreach (var skill in RequiredCompetencies) { RemoveRequirement(skill); }
+            RequiredCompetencies = [];
             foreach (var skill in newReqs) { AddRequirement(skill); }
         }
         else
@@ -123,7 +123,7 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            foreach (var slot in Planning) { RemoveCourseMoment(slot); }
+            Planning = [];
             foreach (var slot in NewMoments) { AddCourseMoment(slot); }
         }
         else
