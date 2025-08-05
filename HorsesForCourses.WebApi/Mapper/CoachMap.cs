@@ -19,4 +19,9 @@ public class CoachMapper
     {
         return new GetCoach(coach.Id, coach.Name, coach.Email.ToString(), coach.CourseList.Count());
     }
+
+    public int GetNextId(AppDbContext context)
+    {
+        return context.Coaches.Any() ? context.Coaches.Max(c => c.Id) : 0;
+    }
 }

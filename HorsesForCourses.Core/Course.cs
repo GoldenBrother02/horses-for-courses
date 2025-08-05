@@ -24,6 +24,11 @@ public class Course
 
     public Coach? coach;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    public Course() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
+
     public Course(int id, string name, DateOnly start, DateOnly end)
     {
         CourseName = name;
@@ -112,8 +117,7 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            RequiredCompetencies = [];
-            foreach (var skill in newReqs) { AddRequirement(skill); }
+            RequiredCompetencies = newReqs;
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");

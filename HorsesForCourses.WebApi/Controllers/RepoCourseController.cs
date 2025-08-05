@@ -23,14 +23,14 @@ public class CourseController : ControllerBase
         _coachMap = coachMap;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}")] //
     public ActionResult<CourseDTO> GetById(int id)
     {
         var course = _repository.GetById(id);
         return course is null ? NotFound() : Ok(new CourseDTO(course.CourseName, course.StartDate, course.EndDate, course.Id, course.RequiredCompetencies, _timeSlotDTOMap.Revert(course.Planning.ToList()), _coachMap.CoachToIdName(course.coach!)));
     }
 
-    [HttpPost]
+    [HttpPost] //
     public ActionResult RegisterCourse([FromBody] PostCourse post)
     {
         var course = _courseMap.PostToCourse(post, _repository.NewId());
@@ -38,7 +38,7 @@ public class CourseController : ControllerBase
         return Ok(course.Id);
     }
 
-    [HttpPost("{id}/skills")]
+    [HttpPost("{id}/skills")] //
     public ActionResult OverwriteRequirements(int id, [FromBody] List<string> NewSkills)
     {
         var course = _repository.GetById(id);
@@ -48,7 +48,7 @@ public class CourseController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("{id}/timeslots")]
+    [HttpPost("{id}/timeslots")] //
     public ActionResult OverwriteCourseMoments(int id, [FromBody] List<TimeSlotDTO> NewMoments)
     {
         var course = _repository.GetById(id);
@@ -61,7 +61,7 @@ public class CourseController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("{id}/confirm")]
+    [HttpPost("{id}/confirm")] //
     public ActionResult ConfirmCourse(int id)
     {
         var course = _repository.GetById(id);
@@ -71,7 +71,7 @@ public class CourseController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("{CourseId}/assign-coach")]
+    [HttpPost("{CourseId}/assign-coach")] //
     public ActionResult AddCoach(int CourseId, int CoachId)
     {
         var course = _repository.GetById(CourseId);
@@ -84,7 +84,7 @@ public class CourseController : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet] //
     public ActionResult GetAllCourses()
     {
         return Ok(_repository.GetAll());

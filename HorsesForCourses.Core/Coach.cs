@@ -9,7 +9,7 @@ public class Coach
 
     private List<string> Competencies = new();
 
-    public IReadOnlyList<string> competencies => Competencies;
+    public IReadOnlyList<string> competencies { get { return Competencies; } }
 
     private List<Booking> Bookings = new();
 
@@ -19,7 +19,11 @@ public class Coach
 
     public EmailAddress Email { get; }
 
-    public List<Course> CourseList { get; private set; }
+    public List<Course> CourseList { get; private set; } = new();
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    public Coach() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 
     public Coach(int id, string name, string mail)
@@ -60,8 +64,7 @@ public class Coach
 
     public void OverwriteCompetenties(List<string> newComps)
     {
-        foreach (var skill in competencies) { RemoveCompetence(skill); }
-        foreach (var skill in newComps) { AddCompetence(skill); }
+        Competencies = newComps;
     }
 
     public void AddCourse(Course course)

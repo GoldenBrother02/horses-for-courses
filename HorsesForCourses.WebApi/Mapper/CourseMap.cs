@@ -27,4 +27,9 @@ public class CourseMapper
     {
         return new GetCourse(course.CourseName, course.StartDate, course.EndDate, course.Id, course.Planning.Any(), course.coach is not null);
     }
+
+    public int GetNextId(AppDbContext context)
+    {
+        return context.Courses.Any() ? context.Courses.Max(c => c.Id) : 0;
+    }
 }

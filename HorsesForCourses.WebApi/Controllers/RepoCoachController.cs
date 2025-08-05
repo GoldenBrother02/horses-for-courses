@@ -19,14 +19,14 @@ public class CoachController : ControllerBase
         _courseMap = coursemap;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}")]  //
     public ActionResult<CoachDTO> GetById(int id)
     {
         var coach = _repository.GetById(id);
         return coach is null ? NotFound() : Ok(new CoachDTO(coach.Id, coach.Name, coach.Email.ToString(), coach.competencies.ToList(), _courseMap.ListToIdName(coach.CourseList)));
     }
 
-    [HttpPost]
+    [HttpPost] //
     public ActionResult RegisterCoach([FromBody] PostCoach post)
     {
         var coach = _coachMap.Map(post, _repository.NewId());
@@ -34,7 +34,7 @@ public class CoachController : ControllerBase
         return Ok(coach.Id);
     }
 
-    [HttpPost("{id}/skills")]
+    [HttpPost("{id}/skills")] //
     public ActionResult OverwriteSkillset(int id, [FromBody] List<string> NewSkills)
     {
         var coach = _repository.GetById(id);
@@ -45,7 +45,7 @@ public class CoachController : ControllerBase
         return Ok();
     }
 
-    [HttpGet]
+    [HttpGet]  //
     public ActionResult GetAllCoaches()
     {
         return Ok(_repository.GetAll());

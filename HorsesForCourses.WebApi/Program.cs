@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using HorsesForCourses.WebApi;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -23,6 +24,8 @@ builder.Services.AddSingleton<InMemoryCourseRepository>();
 builder.Services.AddSingleton<CoachMapper>();
 builder.Services.AddSingleton<CourseMapper>();
 builder.Services.AddSingleton<TimeSlotMapper>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=app.db"));
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -36,6 +39,21 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+var options = new DbContextOptionsBuilder<AppDbContext>()
+    .UseSqlite("Data Source=app.db")
+    .Options;
+
+using var context = new AppDbContext(options);
+
+// Zorg dat de database en tabellen worden aangemaakt
+context.Database.Migrate();
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 
@@ -53,28 +71,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-app.UseExceptionHandler(appBuilder =>
-{
-    appBuilder.Run(async context =>
-    {
-        context.Response.StatusCode = 500;
-        context.Response.ContentType = "application/problem+json";
-
-        var problem = new ProblemDetails
-        {
-            Title = "Er is een fout opgetreden",
-            Status = 500,
-            Detail = "Er ging iets mis tijdens het verwerken van je verzoek."
-        };
-
-        await context.Response.WriteAsJsonAsync(problem);
-    });
-});
-
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .Enrich.FromLogContext()
-    .CreateLogger();
-
-builder.Host.UseSerilog();
