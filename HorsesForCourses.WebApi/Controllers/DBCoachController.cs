@@ -25,7 +25,7 @@ public class DBCoachController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Coach>> GetCoachById(int id)
     {
-        var coach = await _context.Coaches.FirstOrDefaultAsync(e => e.Id == id);
+        var coach = await _context.Coaches.Include(c => c.CourseList).FirstOrDefaultAsync(e => e.Id == id);
         return coach is null ? NotFound() : Ok(coach);
     }
 

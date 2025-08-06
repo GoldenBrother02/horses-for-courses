@@ -45,9 +45,6 @@ namespace HorsesForCourses.WebApi.Migrations
                     b.Property<int?>("CoachId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("CoachId1")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("CourseName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -70,8 +67,6 @@ namespace HorsesForCourses.WebApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CoachId");
-
-                    b.HasIndex("CoachId1");
 
                     b.ToTable("Courses", (string)null);
                 });
@@ -157,12 +152,8 @@ namespace HorsesForCourses.WebApi.Migrations
             modelBuilder.Entity("HorsesForCourses.Core.Course", b =>
                 {
                     b.HasOne("HorsesForCourses.Core.Coach", "coach")
-                        .WithMany()
-                        .HasForeignKey("CoachId");
-
-                    b.HasOne("HorsesForCourses.Core.Coach", null)
                         .WithMany("CourseList")
-                        .HasForeignKey("CoachId1");
+                        .HasForeignKey("CoachId");
 
                     b.OwnsMany("HorsesForCourses.Core.TimeSlot", "Planning", b1 =>
                         {

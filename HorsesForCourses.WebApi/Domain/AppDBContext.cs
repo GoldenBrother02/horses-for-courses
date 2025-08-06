@@ -84,8 +84,8 @@ public class AppDbContext : DbContext
                 .HasColumnName("Status");
 
             // Optional Coach FK
-            course.HasOne(typeof(Coach), nameof(Course.coach))
-                .WithMany()
+            course.HasOne(c => c.coach)
+                .WithMany(c => c.CourseList)
                 .HasForeignKey("CoachId")
                 .IsRequired(false);
 

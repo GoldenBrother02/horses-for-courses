@@ -56,7 +56,6 @@ namespace HorsesForCourses.WebApi.Migrations
                     StartDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     CoachId = table.Column<int>(type: "INTEGER", nullable: true),
-                    CoachId1 = table.Column<int>(type: "INTEGER", nullable: true),
                     Status = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -65,11 +64,6 @@ namespace HorsesForCourses.WebApi.Migrations
                     table.ForeignKey(
                         name: "FK_Courses_Coaches_CoachId",
                         column: x => x.CoachId,
-                        principalTable: "Coaches",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Courses_Coaches_CoachId1",
-                        column: x => x.CoachId1,
                         principalTable: "Coaches",
                         principalColumn: "Id");
                 });
@@ -120,11 +114,6 @@ namespace HorsesForCourses.WebApi.Migrations
                 name: "IX_Courses_CoachId",
                 table: "Courses",
                 column: "CoachId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Courses_CoachId1",
-                table: "Courses",
-                column: "CoachId1");
         }
 
         /// <inheritdoc />

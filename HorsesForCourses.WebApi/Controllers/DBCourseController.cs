@@ -24,7 +24,7 @@ public class DBCourseController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Course>> GetCourseById(int id)
     {
-        var course = await _context.Courses.FirstOrDefaultAsync(e => e.Id == id);
+        var course = await _context.Courses.Include(c => c.Planning).FirstOrDefaultAsync(e => e.Id == id);
         return course is null ? NotFound() : Ok(course);
     }
 
