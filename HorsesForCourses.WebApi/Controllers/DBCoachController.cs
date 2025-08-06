@@ -10,15 +10,11 @@ namespace HorsesForCourses.WebApi;
 public class DBCoachController : ControllerBase
 {
     private readonly CoachMapper _coachMap;
-    private readonly CourseMapper _courseMap;
-    private readonly TimeSlotMapper _timeSlotDTOMap;
     private readonly AppDbContext _context;
 
-    public DBCoachController(CoachMapper coachMap, CourseMapper coursemap, TimeSlotMapper timeslotDTOMap, AppDbContext context)
+    public DBCoachController(CoachMapper coachMap, AppDbContext context)
     {
         _coachMap = coachMap;
-        _courseMap = coursemap;
-        _timeSlotDTOMap = timeslotDTOMap;
         _context = context;
     }
 
