@@ -24,6 +24,8 @@ builder.Services.AddSingleton<InMemoryCourseRepository>();
 builder.Services.AddSingleton<CoachMapper>();
 builder.Services.AddSingleton<CourseMapper>();
 builder.Services.AddSingleton<TimeSlotMapper>();
+builder.Services.AddScoped<CoachRepository>();
+builder.Services.AddScoped<CourseRepository>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=app.db"));
 

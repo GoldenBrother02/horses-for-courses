@@ -64,7 +64,11 @@ public class Coach
 
     public void OverwriteCompetenties(List<string> newComps)
     {
-        Competencies = newComps;
+        Competencies = [];
+        foreach (var comp in newComps)
+        {
+            AddCompetence(comp);
+        }
     }
 
     public void AddCourse(Course course)

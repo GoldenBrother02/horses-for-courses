@@ -117,7 +117,11 @@ public class Course
     {
         if (Status != States.FINALISED)
         {
-            RequiredCompetencies = newReqs;
+            RequiredCompetencies = [];
+            foreach (var competence in newReqs)
+            {
+                AddRequirement(competence);
+            }
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");
@@ -128,7 +132,10 @@ public class Course
         if (Status != States.FINALISED)
         {
             Planning = [];
-            foreach (var slot in NewMoments) { AddCourseMoment(slot); }
+            foreach (var slot in NewMoments)
+            {
+                AddCourseMoment(slot);
+            }
         }
         else
             throw new Exception("Course has been finalised and cannot be altered.");

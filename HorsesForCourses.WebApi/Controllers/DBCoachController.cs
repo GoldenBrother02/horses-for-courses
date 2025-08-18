@@ -9,47 +9,45 @@ namespace HorsesForCourses.WebApi;
 [Route("api/Coaches")]
 public class DBCoachController : ControllerBase
 {
-    private readonly CoachMapper _coachMap;
-    private readonly AppDbContext _context;
+    private readonly CoachRepository _repo;
 
-    public DBCoachController(CoachMapper coachMap, AppDbContext context)
+    public DBCoachController(CoachRepository repository)
     {
-        _coachMap = coachMap;
-        _context = context;
+        _repo = repository;
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Coach>> GetCoachById(int id)
     {
-        var coach = await _context.Coaches.Include(c => c.CourseList).FirstOrDefaultAsync(e => e.Id == id);
+        var coach = await _repo.GetCoachById(id);
         return coach is null ? NotFound() : Ok(coach);
     }
 
     [HttpPost]
     public async Task<ActionResult<Coach>> CreateCoach([FromBody] PostCoach post)
     {
-        var result = _coachMap.Map(post, _coachMap.GetNextId(_context) + 1);
-        _context.Coaches.Add(result);
-        await _context.SaveChangesAsync();
+        var result = await _repo.CreateCoach(post);
         return CreatedAtAction(nameof(GetCoachById), new { id = result.Id }, result);
     }
 
     [HttpPost("{id}/Competencies")]
     public async Task<ActionResult> OverwriteCoachSkillset(int id, [FromBody] List<string> NewSkills)
     {
-        var coach = await _context.Coaches.FirstOrDefaultAsync(e => e.Id == id);
+        var coach = await _repo.GetCoachById(id);
         if (coach is null) { return NotFound(); }
 
-        coach.OverwriteCompetenties(NewSkills);
-        await _context.SaveChangesAsync();
+        await _repo.OverwriteCoachSkillset(coach, NewSkills);
 
         return Ok();
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Coach>>> GetAllCoaches()
+    public async Task<ActionResult<PagedResult<CoachDTO>>> GetAllCoaches(
+    [FromQuery] int page = 1,
+    [FromQuery] int size = 10,
+    CancellationToken ct = default)
     {
-        var list = await _context.Coaches.ToListAsync();
-        return Ok(list);
+        var result = await _repo.GetAllCoaches(page, size, ct);
+        return Ok(result);
     }
 }
