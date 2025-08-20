@@ -1,6 +1,3 @@
-using System.Diagnostics.Contracts;
-using System.Dynamic;
-
 namespace HorsesForCourses.Core;
 
 public class Coach
@@ -26,11 +23,10 @@ public class Coach
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 
-    public Coach(int id, string name, string mail)
+    public Coach(string name, string mail)
     {
         Name = name;
         Email = EmailAddress.From(mail);
-        Id = id;
         CourseList = new();
     }
 

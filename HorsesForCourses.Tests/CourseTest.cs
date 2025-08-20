@@ -1,4 +1,3 @@
-using System.Net;
 using HorsesForCourses.Core;
 
 namespace HorsesForCourses.Tests;
@@ -18,9 +17,9 @@ public class CourseTest
     {
         coursestart = new DateOnly(2025, 7, 11);
         courseend = new DateOnly(2025, 11, 11);
-        course = new Course(0, "Programming 1", coursestart, courseend);
-        coach = new Coach(0, "Mark", "mark@skynet.com");
-        coach2 = new Coach(1, "Benny", "benny@skynet.com");
+        course = new Course("Programming 1", coursestart, courseend);
+        coach = new Coach("Mark", "mark@skynet.com");
+        coach2 = new Coach("Benny", "benny@skynet.com");
     }
 
     [Fact]

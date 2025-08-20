@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using HorsesForCourses.WebApi;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -19,11 +18,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<InMemoryCoachRepository>();
-builder.Services.AddSingleton<InMemoryCourseRepository>();
-builder.Services.AddSingleton<CoachMapper>();
-builder.Services.AddSingleton<CourseMapper>();
-builder.Services.AddSingleton<TimeSlotMapper>();
 builder.Services.AddScoped<CoachRepository>();
 builder.Services.AddScoped<CourseRepository>();
 builder.Services.AddDbContext<AppDbContext>(options =>

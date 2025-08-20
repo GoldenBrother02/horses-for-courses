@@ -23,11 +23,11 @@ public class CoursePersistancyTests
 
         using (var context = new AppDbContext(options))
         {
-            var coach = new Coach(1, "naam", "em@il");
+            var coach = new Coach("naam", "em@il");
             coach.AddCompetence("dev");
             context.Coaches.Add(coach);
 
-            var course = new Course(1, "cursus", new DateOnly(2025, 1, 1), new DateOnly(2025, 2, 1));
+            var course = new Course("cursus", new DateOnly(2025, 1, 1), new DateOnly(2025, 2, 1));
             course.AddRequirement("dev");
             course.AddCourseMoment(
                 TimeSlot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(12, 0)));

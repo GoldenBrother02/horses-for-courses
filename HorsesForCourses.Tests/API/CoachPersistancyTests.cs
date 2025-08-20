@@ -23,7 +23,7 @@ public class CoachPersistancyTests
 
         using (var context = new AppDbContext(options))
         {
-            context.Coaches.Add(new Coach(1, "naam", "em@il"));
+            context.Coaches.Add(new Coach("naam", "em@il"));
             await context.SaveChangesAsync();
         }
 

@@ -1,7 +1,5 @@
-using System;
 using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.WebApi;
 
@@ -26,7 +24,10 @@ public class DBCoachController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Coach>> CreateCoach([FromBody] PostCoach post)
     {
-        var result = await _repo.CreateCoach(post);
+        var result = new Coach(post.Name, post.Email);
+
+        await _repo.CreateCoach(result);
+
         return CreatedAtAction(nameof(GetCoachById), new { id = result.Id }, result);
     }
 
@@ -36,7 +37,8 @@ public class DBCoachController : ControllerBase
         var coach = await _repo.GetCoachById(id);
         if (coach is null) { return NotFound(); }
 
-        await _repo.OverwriteCoachSkillset(coach, NewSkills);
+        coach.OverwriteCompetenties(NewSkills);
+        await _repo.Save();
 
         return Ok();
     }

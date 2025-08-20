@@ -1,7 +1,5 @@
-using System;
 using HorsesForCourses.Core;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.WebApi;
 
@@ -27,7 +25,10 @@ public class DBCourseController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Course>> CreateCourse([FromBody] PostCourse post)
     {
-        var result = await _repo.CreateCourse(post);
+        var result = new Course(post.Name, post.Start, post.End);
+
+        await _repo.CreateCourse(result);
+
         return CreatedAtAction(nameof(GetCourseById), new { id = result.Id }, result);
     }
 
@@ -37,7 +38,8 @@ public class DBCourseController : ControllerBase
         var course = await _repo.GetCourseById(id);
         if (course is null) { return NotFound(); }
 
-        await _repo.OverwriteRequirements(course, NewSkills);
+        course.OverwriteRequirements(NewSkills);
+        await _repo.Save();
 
         return Ok();
     }
@@ -58,7 +60,10 @@ public class DBCourseController : ControllerBase
         var course = await _repo.GetCourseById(id);
         if (course is null) { return NotFound(); }
 
-        await _repo.OverwriteCourseMoments(course, NewMoments);
+        var list = NewMoments.Select(m => new TimeSlot(m.Day, m.Start, m.End)).ToList();
+
+        course.OverwriteMoments(list);
+        await _repo.Save();
 
         return Ok();
     }
@@ -69,7 +74,8 @@ public class DBCourseController : ControllerBase
         var course = await _repo.GetCourseById(id);
         if (course is null) { return NotFound(); }
 
-        await _repo.ConfirmCourse(course);
+        course.ConfirmCourse();
+        await _repo.Save();
 
         return Ok();
     }
@@ -83,7 +89,8 @@ public class DBCourseController : ControllerBase
         var coach = await _coachRepo.GetCoachById(CoachId);
         if (coach is null) { return NotFound(); }
 
-        await _repo.AddCoach(course, coach);
+        course.AddCoach(coach);
+        await _repo.Save();
 
         return Ok();
     }

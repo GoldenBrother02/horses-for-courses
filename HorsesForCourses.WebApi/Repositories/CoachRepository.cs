@@ -1,6 +1,4 @@
-using System;
 using HorsesForCourses.Core;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.WebApi;
@@ -14,9 +12,9 @@ public class CoachRepository
         _context = context;
     }
 
-    public int GetNextId(AppDbContext context)
+    public async Task Save()
     {
-        return context.Coaches.Any() ? context.Coaches.Max(c => c.Id) : 0;
+        await _context.SaveChangesAsync();
     }
 
     public async Task<Coach> GetCoachById(int id)
@@ -25,18 +23,11 @@ public class CoachRepository
         return coach!;
     }
 
-    public async Task<Coach> CreateCoach(PostCoach post)
+    public async Task<Coach> CreateCoach(Coach post)
     {
-        var result = new Coach(GetNextId(_context) + 1, post.Name, post.Email);
-        _context.Coaches.Add(result);
-        await _context.SaveChangesAsync();
-        return result;
-    }
-
-    public async Task OverwriteCoachSkillset(Coach coach, List<string> NewSkills)
-    {
-        coach.OverwriteCompetenties(NewSkills);
-        await _context.SaveChangesAsync();
+        _context.Coaches.Add(post);
+        await Save();
+        return post;
     }
 
     public async Task<PagedResult<CoachDTO>> GetAllCoaches(int page, int size, CancellationToken ct)

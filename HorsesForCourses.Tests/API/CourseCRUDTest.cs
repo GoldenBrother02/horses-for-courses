@@ -1,5 +1,4 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.Tests;
 using HorsesForCourses.WebApi;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +8,7 @@ public class CourseCrudTests : CrudTestBase<AppDbContext, Course>
 {
     protected override AppDbContext CreateContext(DbContextOptions<AppDbContext> options) => new AppDbContext(options);
 
-    protected override Course CreateEntity() => new Course(1, "test", new DateOnly(2025, 6, 6), new DateOnly(2026, 6, 6));
+    protected override Course CreateEntity() => new Course("test", new DateOnly(2025, 6, 6), new DateOnly(2026, 6, 6));
 
     protected override DbSet<Course> GetDbSet(AppDbContext context) => context.Courses;
 

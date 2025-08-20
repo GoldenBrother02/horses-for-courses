@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using HorsesForCourses.Core;
 
 namespace HorsesForCourses.Tests;
@@ -10,7 +9,7 @@ public class CoachTest
     Booking booking;
     public CoachTest()
     {
-        coach = new Coach(0, "Mark", "mark@skynet.com");
+        coach = new Coach("Mark", "mark@skynet.com");
         var slot1 = TimeSlot.From(DayOfWeek.Monday, new TimeOnly(9, 0), new TimeOnly(10, 0));
         var slot2 = TimeSlot.From(DayOfWeek.Monday, new TimeOnly(12, 0), new TimeOnly(15, 0));
         var slot3 = TimeSlot.From(DayOfWeek.Tuesday, new TimeOnly(9, 0), new TimeOnly(10, 0));

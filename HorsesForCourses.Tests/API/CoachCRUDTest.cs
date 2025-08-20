@@ -1,5 +1,4 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.Tests;
 using HorsesForCourses.WebApi;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,7 @@ public class CoachCrudTests : CrudTestBase<AppDbContext, Coach>
     protected override AppDbContext CreateContext(DbContextOptions<AppDbContext> options) => new AppDbContext(options);
 
     protected override Coach CreateEntity()
-        => new Coach(1, "Unit Test", "unit@test.com");
+        => new Coach("Unit Test", "unit@test.com");
 
     protected override DbSet<Coach> GetDbSet(AppDbContext context)
         => context.Coaches;
