@@ -17,7 +17,6 @@ public class BookingEdges
     public void Overlaps_Edit_on_friday_but_we_only_teach_on_thursday()
     {
         // probably better guarded against/handled on Booking creation 
-        //timeslot does not fall in booking start/end times
         var bookingOne = Booking.From([TimeSlot.From(DayOfWeek.Thursday, new TimeOnly(9, 0), new TimeOnly(10, 0))],
             new DateOnly(2025, 8, 21),
             new DateOnly(2025, 8, 21));
