@@ -14,7 +14,7 @@ public class BookingEdges
     }
 
     [Fact]
-    public void Overlaps_Edit_on_friday_but_we_only_teach_on_thursday()
+    public void Overlaps_Edit_on_thursday_but_we_only_teach_on_thursday()
     {
         // probably better guarded against/handled on Booking creation 
         var bookingOne = Booking.From([TimeSlot.From(DayOfWeek.Thursday, new TimeOnly(9, 0), new TimeOnly(10, 0))],
@@ -26,6 +26,22 @@ public class BookingEdges
             new DateOnly(2025, 8, 21));
 
         Assert.Equal(DayOfWeek.Thursday, new DateOnly(2025, 8, 21).DayOfWeek);
+        Assert.False(bookingOne.BookingOverlap(bookingTwo), "Bookings should not overlap.");
+    }
+
+    [Fact]
+    public void DayNotInBothBookings()
+    {
+        var bookingOne = Booking.From([TimeSlot.From(DayOfWeek.Tuesday, new TimeOnly(9, 0), new TimeOnly(10, 0))],
+            new DateOnly(2025, 1, 22),
+            new DateOnly(2025, 1, 29));
+
+        var bookingTwo = Booking.From([TimeSlot.From(DayOfWeek.Tuesday, new TimeOnly(9, 0), new TimeOnly(12, 0))],
+            new DateOnly(2025, 1, 19),
+            new DateOnly(2025, 1, 27));
+        Assert.Equal(DayOfWeek.Wednesday, new DateOnly(2025, 1, 22).DayOfWeek);
+        Assert.Equal(DayOfWeek.Monday, new DateOnly(2025, 1, 27).DayOfWeek);
+        Assert.Equal(DayOfWeek.Tuesday, new DateOnly(2025, 1, 28).DayOfWeek);
         Assert.False(bookingOne.BookingOverlap(bookingTwo), "Bookings should not overlap.");
     }
 }
