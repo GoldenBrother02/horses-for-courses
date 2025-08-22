@@ -61,7 +61,7 @@ public class DBCourseController : ControllerBase
         var course = await _repo.GetCourseById(id);
         if (course is null) { return NotFound(); }
 
-        var list = NewMoments.Select(m => new TimeSlot(m.Day, m.Start, m.End)).ToList();
+        var list = NewMoments.Select(m => TimeSlot.From(m.Day, m.Start, m.End)).ToList();
 
         course.OverwriteMoments(list);
         await _repo.Save();
