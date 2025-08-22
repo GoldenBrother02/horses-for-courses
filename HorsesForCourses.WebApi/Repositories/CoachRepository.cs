@@ -25,8 +25,7 @@ public class CoachRepository
 
     public async Task<Coach> CreateCoach(Coach post)
     {
-        _context.Coaches.Add(post);
-        await Save();
+        await _context.Coaches.AddAsync(post);
         return post;
     }
 

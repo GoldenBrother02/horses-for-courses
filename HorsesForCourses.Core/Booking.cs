@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace HorsesForCourses.Core;
 
 public record Booking
@@ -19,6 +21,16 @@ public record Booking
     public static Booking From(List<TimeSlot> planning, DateOnly startdate, DateOnly enddate)
     {
         if (startdate > enddate) throw new Exception("start date must be before end date");
+        bool x = startdate.Year == enddate.Year;
+        bool y = startdate.Month == enddate.Month;
+        bool z = (enddate.DayNumber - startdate.DayNumber) < 7;
+        if (x && y && z)
+        {
+            foreach (var slot in planning)
+            {
+                if (slot.Day > enddate.DayOfWeek || slot.Day < startdate.DayOfWeek) { throw new Exception("Day of timeslot should appear in duration of booking."); }
+            }
+        }
         return new Booking(planning, startdate, enddate);
     }
 

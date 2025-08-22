@@ -25,8 +25,7 @@ public class CourseRepository
 
     public async Task<Course> CreateCourse(Course post)
     {
-        _context.Courses.Add(post);
-        await Save();
+        await _context.Courses.AddAsync(post);
         return post;
     }
 

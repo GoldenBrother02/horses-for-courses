@@ -27,6 +27,7 @@ public class DBCoachController : ControllerBase
         var result = new Coach(post.Name, post.Email);
 
         await _repo.CreateCoach(result);
+        await _repo.Save();
 
         return CreatedAtAction(nameof(GetCoachById), new { id = result.Id }, result);
     }

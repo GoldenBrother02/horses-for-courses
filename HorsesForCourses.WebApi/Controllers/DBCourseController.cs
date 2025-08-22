@@ -28,6 +28,7 @@ public class DBCourseController : ControllerBase
         var result = new Course(post.Name, post.Start, post.End);
 
         await _repo.CreateCourse(result);
+        await _repo.Save();
 
         return CreatedAtAction(nameof(GetCourseById), new { id = result.Id }, result);
     }
