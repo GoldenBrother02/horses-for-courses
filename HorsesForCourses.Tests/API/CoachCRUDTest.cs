@@ -1,5 +1,5 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.WebApi;
+using HorsesForCourses.Service;
 using Microsoft.EntityFrameworkCore;
 
 namespace HorsesForCourses.Tests;

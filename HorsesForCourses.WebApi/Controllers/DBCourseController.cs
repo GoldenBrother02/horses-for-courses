@@ -1,4 +1,5 @@
 using HorsesForCourses.Core;
+using HorsesForCourses.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HorsesForCourses.WebApi;
@@ -7,18 +8,16 @@ namespace HorsesForCourses.WebApi;
 [Route("api/Courses")]
 public class DBCourseController : ControllerBase
 {
-    private readonly CourseRepository _repo;
-    private readonly CoachRepository _coachRepo;
-    public DBCourseController(CourseRepository repository, CoachRepository coachrepository)
+    private readonly ICourseService _service;
+    public DBCourseController(ICourseService service)
     {
-        _repo = repository;
-        _coachRepo = coachrepository;
+        _service = service;
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Course>> GetCourseById(int id)
     {
-        var course = await _repo.GetCourseById(id);
+        var course = await _service.GetCourseById(id);
         return course is null ? NotFound() : Ok(course);
     }
 
@@ -27,8 +26,7 @@ public class DBCourseController : ControllerBase
     {
         var result = new Course(post.Name, post.Start, post.End);
 
-        await _repo.CreateCourse(result);
-        await _repo.Save();
+        await _service.CreateCourse(result);
 
         return CreatedAtAction(nameof(GetCourseById), new { id = result.Id }, result);
     }
@@ -36,13 +34,10 @@ public class DBCourseController : ControllerBase
     [HttpPost("{id}/Competencies")]
     public async Task<ActionResult> OverwriteRequirements(int id, [FromBody] List<string> NewSkills)
     {
-        var course = await _repo.GetCourseById(id);
-        if (course is null) { return NotFound(); }
+        var success = await _service.OverwriteRequirements(id, NewSkills);
 
-        course.OverwriteRequirements(NewSkills);
-        await _repo.Save();
-
-        return Ok();
+        if (success) { return Ok(); }
+        return NotFound();
     }
 
     [HttpGet]
@@ -51,48 +46,34 @@ public class DBCourseController : ControllerBase
     [FromQuery] int size = 10,
     CancellationToken ct = default)
     {
-        var list = await _repo.GetAllCourses(page, size, ct);
+        var list = await _service.GetAllCourses(page, size, ct);
         return Ok(list);
     }
 
     [HttpPost("{id}/timeslots")]
     public async Task<ActionResult> OverwriteCourseMoments(int id, [FromBody] List<TimeSlotDTO> NewMoments)
     {
-        var course = await _repo.GetCourseById(id);
-        if (course is null) { return NotFound(); }
+        var success = await _service.OverwriteCourseMoments(id, NewMoments);
 
-        var list = NewMoments.Select(m => TimeSlot.From(m.Day, m.Start, m.End)).ToList();
-
-        course.OverwriteMoments(list);
-        await _repo.Save();
-
-        return Ok();
+        if (success) { return Ok(); }
+        return NotFound();
     }
 
     [HttpPost("{id}/confirm")]
     public async Task<ActionResult> ConfirmCourse(int id)
     {
-        var course = await _repo.GetCourseById(id);
-        if (course is null) { return NotFound(); }
+        var success = await _service.ConfirmCourse(id);
 
-        course.ConfirmCourse();
-        await _repo.Save();
-
-        return Ok();
+        if (success) { return Ok(); }
+        return NotFound();
     }
 
     [HttpPost("{CourseId}/assign-coach")]
     public async Task<ActionResult> AddCoach(int CourseId, int CoachId)
     {
-        var course = await _repo.GetCourseById(CourseId);
-        if (course is null) { return NotFound(); }
+        var success = await _service.AddCoach(CourseId, CoachId);
 
-        var coach = await _coachRepo.GetCoachById(CoachId);
-        if (coach is null) { return NotFound(); }
-
-        course.AddCoach(coach);
-        await _repo.Save();
-
-        return Ok();
+        if (success) { return Ok(); }
+        return NotFound();
     }
 }

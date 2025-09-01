@@ -1,4 +1,5 @@
 using HorsesForCourses.Core;
+using HorsesForCourses.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HorsesForCourses.WebApi;
@@ -7,17 +8,17 @@ namespace HorsesForCourses.WebApi;
 [Route("api/Coaches")]
 public class DBCoachController : ControllerBase
 {
-    private readonly CoachRepository _repo;
+    private readonly ICoachService _service;
 
-    public DBCoachController(CoachRepository repository)
+    public DBCoachController(ICoachService service)
     {
-        _repo = repository;
+        _service = service;
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Coach>> GetCoachById(int id)
     {
-        var coach = await _repo.GetCoachById(id);
+        var coach = await _service.GetCoachById(id);
         return coach is null ? NotFound() : Ok(coach);
     }
 
@@ -26,22 +27,19 @@ public class DBCoachController : ControllerBase
     {
         var result = new Coach(post.Name, post.Email);
 
-        await _repo.CreateCoach(result);
-        await _repo.Save();
+        await _service.CreateCoach(result);
 
         return CreatedAtAction(nameof(GetCoachById), new { id = result.Id }, result);
+
     }
 
     [HttpPost("{id}/Competencies")]
     public async Task<ActionResult> OverwriteCoachSkillset(int id, [FromBody] List<string> NewSkills)
     {
-        var coach = await _repo.GetCoachById(id);
-        if (coach is null) { return NotFound(); }
+        var success = await _service.OverwriteCoachSkillset(id, NewSkills);
 
-        coach.OverwriteCompetenties(NewSkills);
-        await _repo.Save();
-
-        return Ok();
+        if (success) { return Ok(); }
+        return NotFound();
     }
 
     [HttpGet]
@@ -50,7 +48,7 @@ public class DBCoachController : ControllerBase
     [FromQuery] int size = 10,
     CancellationToken ct = default)
     {
-        var result = await _repo.GetAllCoaches(page, size, ct);
+        var result = await _service.GetAllCoaches(page, size, ct);
         return Ok(result);
     }
 }

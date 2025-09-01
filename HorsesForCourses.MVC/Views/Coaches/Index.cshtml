@@ -1,0 +1,32 @@
+@using HorsesForCourses.Core
+@using HorsesForCourses.Service
+
+@model PagedResult<CoachDTO>
+
+@{
+    ViewData["Title"] = "All Coaches";
+}
+
+<h1>All Coaches</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Competencies</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var coach in Model.Items)
+        {
+            <tr>
+                <td>@coach.Id</td>
+                <td>@coach.Name</td>
+                <td>@coach.Email</td>
+                <td>@string.Join(", ", coach.Competencies!)</td>
+            </tr>
+        }
+    </tbody>
+</table>

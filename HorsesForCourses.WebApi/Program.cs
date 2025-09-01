@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using HorsesForCourses.WebApi;
+using HorsesForCourses.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -22,6 +22,12 @@ builder.Services.AddScoped<CoachRepository>();
 builder.Services.AddScoped<CourseRepository>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=app.db"));
+builder.Services.AddScoped<CoachRepository>();
+builder.Services.AddScoped<ICoachService, CoachService>();
+
+builder.Services.AddScoped<CourseRepository>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+
 
 builder.Services.AddSwaggerGen(options =>
 {
