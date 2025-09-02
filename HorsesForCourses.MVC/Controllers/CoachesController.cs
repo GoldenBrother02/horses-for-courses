@@ -14,7 +14,7 @@ public class CoachesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> GetById(int id)
     {
         var coach = await _service.GetCoachById(id);
         if (coach == null)
@@ -24,26 +24,26 @@ public class CoachesController : Controller
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public IActionResult CreateMenu()
     {
         return View();
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(PostCoach post)
+    public async Task<IActionResult> CreateCoach(PostCoach post)
     {
         if (!ModelState.IsValid)
-            return View(post);
+            return View("CreateMenu", post);
 
         var coach = new Coach(post.Name, post.Email);
         await _service.CreateCoach(coach);
 
-        return RedirectToAction(nameof(Details), new { id = coach.Id });
+        return RedirectToAction(nameof(GetById), new { id = coach.Id });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Edit(int id)
+    public async Task<IActionResult> EditMenu(int id)
     {
         var coach = await _service.GetCoachById(id);
         if (coach == null)
@@ -59,7 +59,7 @@ public class CoachesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(EditCoachSkills model)
+    public async Task<IActionResult> EditSkills(EditCoachSkills model)
     {
         if (!ModelState.IsValid)
             return View(model);
@@ -68,7 +68,7 @@ public class CoachesController : Controller
         if (!success)
             return NotFound();
 
-        return RedirectToAction(nameof(Details), new { id = model.CoachId });
+        return RedirectToAction(nameof(GetById), new { id = model.CoachId });
     }
 
     [HttpGet]

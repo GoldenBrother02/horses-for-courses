@@ -33,16 +33,17 @@
             </div>
         </nav>
     </header>
+
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Coaches" asp-action="Index">Coaches</a>
+        <a class="nav-link text-dark" asp-area="" asp-controller="Coaches" asp-action="CreateMenu">Create a Coach</a>
+    </li>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Coaches" asp-action="Index">Coaches</a>
-        <a class="nav-link text-dark" asp-area="" asp-controller="Coaches" asp-action="Edit">Edit</a>
-    </li>
 
     <footer class="border-top footer text-muted">
         <div class="container">

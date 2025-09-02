@@ -1,0 +1,19 @@
+@using HorsesForCourses.Core
+@using HorsesForCourses.Service
+
+@model PostCoach
+
+@{
+    ViewData["Title"] = "Coach";
+}
+
+<h1>Create Coach</h1>
+
+<form asp-controller="Coaches" asp-action="CreateCoach" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="text" placeholder="Coach Name" name="Name" />
+    <input type="text" placeholder="Coach Email" name="Email" />
+
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+</form>

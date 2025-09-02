@@ -16,6 +16,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>Competencies</th>
+            <th>Edit</th>
         </tr>
     </thead>
     <tbody>
@@ -26,6 +27,12 @@
                 <td>@coach.Name</td>
                 <td>@coach.Email</td>
                 <td>@string.Join(", ", coach.Competencies!)</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Coaches" asp-action="EditMenu"
+                        asp-route-id="@coach.Id">Edit</a>
+                    <a class="btn btn-primary" asp-controller="Coaches" asp-action="GetById"
+                        asp-route-id="@coach.Id">GetByid</a>
+                </td>
             </tr>
         }
     </tbody>

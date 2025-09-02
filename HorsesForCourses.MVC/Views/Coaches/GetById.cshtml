@@ -1,0 +1,29 @@
+@using HorsesForCourses.Core
+@using HorsesForCourses.Service
+
+@model Coach
+
+@{
+    ViewData["Title"] = "Coach";
+}
+
+<h1>Coach</h1>
+
+<div>@Model.Id</div>
+<div>@Model.Name</div>
+<div>@Model.Email.Value.ToString()</div>
+<ul>
+    @foreach (var competence in Model.competencies)
+    {
+        <li>@competence</li>
+    }
+</ul>
+<ul>
+    @foreach (var booking in Model.bookings)
+    {
+        <li>
+            <div>start : @booking.StartDate</div>
+            <div>end : @booking.EndDate</div>
+        </li>
+    }
+</ul>
