@@ -1,0 +1,20 @@
+@using HorsesForCourses.Core
+@using HorsesForCourses.Service
+
+@model PostCourse
+
+@{
+    ViewData["Title"] = "Course";
+}
+
+<h1>Create Course</h1>
+
+<form asp-controller="Courses" asp-action="CreateCourse" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="text" placeholder="Course Name" name="Name" />
+    <input type="date" placeholder="Startdate" name="Start" />
+    <input type="date" placeholder="Enddate" name="End" />
+
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+</form>

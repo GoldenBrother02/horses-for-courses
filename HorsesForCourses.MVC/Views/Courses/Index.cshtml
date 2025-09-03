@@ -1,0 +1,52 @@
+@using HorsesForCourses.Core
+@using HorsesForCourses.Service
+
+@model PagedResult<CourseDTO>
+
+@{
+    ViewData["Title"] = "All Courses";
+}
+
+<h1>All Courses</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Stardate</th>
+            <th>Enddate</th>
+            <th>Competencies</th>
+            <th>Timeslots</th>
+            <th>Assigned Coach</th>
+            <th>Edit</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model.Items)
+        {
+            <tr>
+                <td>@course.Id</td>
+                <td>@course.Name</td>
+                <td>@course.Start</td>
+                <td>@course.End</td>
+                <td>@string.Join(", ", course.Competenties!)</td>
+                <td>
+                    <ul>
+                        @foreach (var slot in course.TimeSlots)
+                        {
+                            <li>@slot.Day : @slot.Start -> @slot.End</li>
+                        }
+                    </ul>
+                </td>
+                <td>@course.Coach!.Name</td>
+                <td>
+                    <a class="btn btn-primary" asp-controller="Courses" asp-action="EditMenu"
+                        asp-route-id="@course.Id">Edit</a>
+                    <a class="btn btn-primary" asp-controller="Courses" asp-action="GetById"
+                        asp-route-id="@course.Id">GetByid</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

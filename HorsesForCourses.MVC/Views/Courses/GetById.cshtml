@@ -1,0 +1,23 @@
+@using HorsesForCourses.Core
+@using HorsesForCourses.Service
+
+@model Course
+
+@{
+    ViewData["Title"] = "Course";
+}
+
+<h1>Course</h1>
+
+<div>@Model.Id</div>
+<div>@Model.CourseName</div>
+<div>Start : @Model.StartDate</div>
+<div>End : @Model.EndDate</div>
+<div>Assigned Coach : @Model.coach</div>
+<span>Planning : </span>
+<ul>
+    @foreach (var timeslot in Model.Planning)
+    {
+        <li>@timeslot.Day : @timeslot.Start -> @timeslot.End</li>
+    }
+</ul>
