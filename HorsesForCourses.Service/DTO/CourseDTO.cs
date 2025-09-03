@@ -9,14 +9,16 @@ public class CourseDTO
     public List<string> Competenties { get; set; }
     public List<TimeSlotDTO> TimeSlots { get; set; }
     public IdNameCoach? Coach { get; set; }
-    public CourseDTO(string name, DateOnly start, DateOnly end, int id, List<string> competenties, List<TimeSlotDTO> timeSlots, IdNameCoach coach)
+    public CourseDTO(string name, DateOnly start, DateOnly end, int id, List<string>? competenties = null,
+        List<TimeSlotDTO>? timeSlots = null,
+        IdNameCoach? coach = null)
     {
         Id = id;
         Name = name;
         Start = start;
         End = end;
-        Competenties = competenties;
-        TimeSlots = timeSlots;
+        Competenties = competenties ?? new List<string>();
+        TimeSlots = timeSlots ?? new List<TimeSlotDTO>();
         Coach = coach;
     }
 }

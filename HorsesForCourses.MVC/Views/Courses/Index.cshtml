@@ -23,28 +23,28 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var course in Model.Items)
+        @foreach (var course in Model?.Items ?? Enumerable.Empty<CourseDTO>())
         {
             <tr>
                 <td>@course.Id</td>
                 <td>@course.Name</td>
                 <td>@course.Start</td>
                 <td>@course.End</td>
-                <td>@string.Join(", ", course.Competenties!)</td>
+                <td>@string.Join(", ", course.Competenties ?? Enumerable.Empty<string>())</td>
                 <td>
                     <ul>
-                        @foreach (var slot in course.TimeSlots)
+                        @foreach (var slot in course.TimeSlots ?? Enumerable.Empty<TimeSlotDTO>())
                         {
                             <li>@slot.Day : @slot.Start -> @slot.End</li>
                         }
                     </ul>
                 </td>
-                <td>@course.Coach!.Name</td>
+                <td>@(course.Coach?.Name ?? "none")</td>
                 <td>
                     <a class="btn btn-primary" asp-controller="Courses" asp-action="EditMenu"
                         asp-route-id="@course.Id">Edit</a>
                     <a class="btn btn-primary" asp-controller="Courses" asp-action="GetById"
-                        asp-route-id="@course.Id">GetByid</a>
+                        asp-route-id="@course.Id">GetById</a>
                 </td>
             </tr>
         }

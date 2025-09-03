@@ -52,7 +52,7 @@ public class CoachesController : Controller
         var model = new EditCoachSkills
         {
             CoachId = coach.Id,
-            CurrentSkills = coach.competencies.ToList()
+            Skills = coach.competencies.ToList()
         };
         return View(model);
     }
@@ -64,7 +64,7 @@ public class CoachesController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var success = await _service.OverwriteCoachSkillset(model.CoachId, model.NewSkills);
+        var success = await _service.OverwriteCoachSkillset(model.CoachId, model.Skills);
         if (!success)
             return NotFound();
 
