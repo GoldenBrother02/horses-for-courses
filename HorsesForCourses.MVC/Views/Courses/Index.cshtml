@@ -74,11 +74,11 @@
 
 <nav>
     <ul class="pagination">
-        @if (Model.HasPrevious)
+        @if (Model!.HasPrevious)
         {
             <li class="page-item">
                 <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span> Previous
+                    &laquo; Previous
                 </a>
             </li>
         }
@@ -94,7 +94,7 @@
         {
             <li class="page-item">
                 <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" aria-label="Next">
-                    Next <span aria-hidden="true">&raquo;</span>
+                    Next &raquo;
                 </a>
             </li>
         }

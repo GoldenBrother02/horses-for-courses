@@ -45,6 +45,8 @@ public class CoursesController : Controller
     public async Task<IActionResult> Index(int page = 1, int size = 10, CancellationToken ct = default)
     {
         var list = await _service.GetAllCourses(page, size, ct);
+        if (list == null)
+            return NotFound();
         return View(list);
     }
 
@@ -116,7 +118,7 @@ public class CoursesController : Controller
         var model = new AddCoachToCourse
         {
             CourseId = course.Id,
-            CoachId = -1
+            CoachId = -1 //number needed to initialise, but one that guarantees an error if not changed
         };
         return View(model);
     }
