@@ -41,15 +41,6 @@ public class CoursesController : Controller
         return RedirectToAction(nameof(GetById), new { id = result.Id });
     }
 
-    [HttpPost("{id}/Competencies")]
-    public async Task<ActionResult> OverwriteRequirements(int id, [FromBody] List<string> NewSkills)
-    {
-        var success = await _service.OverwriteRequirements(id, NewSkills);
-
-        if (success) { return Ok(); }
-        return NotFound();
-    }
-
     [HttpGet]
     public async Task<IActionResult> Index(int page = 1, int size = 10, CancellationToken ct = default)
     {
@@ -57,17 +48,54 @@ public class CoursesController : Controller
         return View(list);
     }
 
-    [HttpPost("{id}/timeslots")]
-    public async Task<ActionResult> OverwriteCourseMoments(int id, [FromBody] List<TimeSlotDTO> NewMoments)
+    [HttpGet]
+    public async Task<IActionResult> EditMenu(int id)
     {
-        var success = await _service.OverwriteCourseMoments(id, NewMoments);
 
-        if (success) { return Ok(); }
-        return NotFound();
+        var course = await _service.GetCourseById(id);
+        if (course == null)
+            return NotFound();
+
+        var model = new EditCourse
+        {
+            CourseId = course.Id,
+            Skills = course.RequiredCompetencies.ToList(),
+            Moments = _service.TimeSlotListToTimeSlotDTOList(course.Planning.ToList())
+        };
+        return View(model);
     }
 
-    [HttpPost("{id}/confirm")]
-    public async Task<ActionResult> ConfirmCourse(int id)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditSkills(EditCourse model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var success = await _service.OverwriteRequirements(model.CourseId, model.Skills);
+        if (!success)
+            return NotFound();
+
+        return RedirectToAction(nameof(GetById), new { id = model.CourseId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditMoments(EditCourse model)
+    {
+        if (!ModelState.IsValid)
+            return View("EditMenu", model);
+
+        var success = await _service.OverwriteCourseMoments(model.CourseId, model.Moments);
+        if (!success)
+            return NotFound();
+
+        return RedirectToAction(nameof(GetById), new { id = model.CourseId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Confirm(int id)
     {
         var success = await _service.ConfirmCourse(id);
 
@@ -75,7 +103,8 @@ public class CoursesController : Controller
         return NotFound();
     }
 
-    [HttpPost("{CourseId}/assign-coach")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<ActionResult> AddCoach(int CourseId, int CoachId)
     {
         var success = await _service.AddCoach(CourseId, CoachId);

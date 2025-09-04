@@ -1,0 +1,139 @@
+@model EditCourse
+
+<h1>Edit Course @Model.CourseId</h1>
+
+<h3>Requirements</h3>
+
+<form asp-controller="Courses" asp-action="EditSkills" method="post" id="editForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="CourseId" />
+    <input type="hidden" asp-for="Moments" />
+
+    <div id="skill-list">
+        @for (int i = 0; i < Model.Skills.Count; i++)
+        {
+            <div class="item">
+                <input type="hidden" name="Skills[@i]" value="@Model.Skills[i]" />
+                <span>@Model.Skills[i]</span>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
+            </div>
+        }
+    </div>
+
+    <div class="input-group mt-3">
+        <input type="text" id="newSkillInput" placeholder="Add a skill" class="form-control" />
+        <button type="button" class="btn btn-success" onclick="addSkill()">Add</button>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Save Requirement Changes</button>
+</form>
+
+
+<br />
+<br />
+<br />
+
+<h3>Moments</h3>
+
+<form asp-controller="Courses" asp-action="EditMoments" method="post" id="editForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="CourseId" />
+    <input type="hidden" asp-for="Skills" />
+
+    <div id="MomentList">
+        @for (int i = 0; i < Model.Moments.Count; i++)
+        {
+            <div class="item">
+                <input type="hidden" name="Moments[@i].Day" value="@Model.Moments[i].Day" />
+                <input type="hidden" name="Moments[@i].Start" value="@Model.Moments[i].Start" />
+                <input type="hidden" name="Moments[@i].End" value="@Model.Moments[i].End" />
+                <span>@Model.Moments[i].Day : @Model.Moments[i].Start -> @Model.Moments[i].End</span>
+                <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
+            </div>
+
+        }
+    </div>
+
+    <div class="input-group mt-3" id="MomentInput">
+        <select name="Day">
+            <option selected>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
+        </select>
+        <input type="time" class="form-control" value="09:00:00" name="Start" />
+        <input type="time" class="form-control" value="17:00:00" name="End" />
+        <button type="button" class="btn btn-success" onclick="addMoment()">Add</button>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Save Moment Changes</button>
+</form>
+
+
+
+<script>
+    function removeItem(button) {
+        button.closest('.item').remove();
+        reindexItems();
+    }
+
+    function addMoment() {
+        const container = document.getElementById('MomentList');
+        const index = container.children.length;
+
+        const day = document.querySelector('#MomentInput select[name="Day"]').value;
+        const start = document.querySelector('#MomentInput input[name="Start"]').value;
+        const end = document.querySelector('#MomentInput input[name="End"]').value;
+
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+        <input type="hidden" name="Moments[${index}].Day" value="${day}" />
+        <input type="hidden" name="Moments[${index}].Start" value="${start}" />
+        <input type="hidden" name="Moments[${index}].End" value="${end}" />
+        <span>${day} : ${start} -> ${end}</span>
+        <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
+        `;
+        container.appendChild(div);
+        reindexItems();
+    }
+
+    function addSkill() {
+        const input = document.getElementById('newSkillInput');
+        const skill = input.value.trim();
+        if (!skill) return;
+
+        const container = document.getElementById('skill-list');
+        const index = container.children.length;
+
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+            <input type="hidden" name="Skills[${index}]" value="${skill}" />
+            <span>${skill}</span>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeItem(this)">Remove</button>
+        `;
+        container.appendChild(div);
+
+        input.value = '';
+        reindexItems();
+    }
+
+    function reindexItems() {
+        const skills = document.querySelectorAll('#skill-list .item');
+        skills.forEach((el, i) => {
+            const hiddenInput = el.querySelector('input[type="hidden"]');
+            hiddenInput.name = `Skills[${i}]`;
+        });
+
+        const moments = document.querySelectorAll('#MomentList .item');
+        moments.forEach((el, i) => {
+            const inputs = el.querySelectorAll('input[type="hidden"]');
+            inputs[0].name = `Moments[${i}].Day`;
+            inputs[1].name = `Moments[${i}].Start`;
+            inputs[2].name = `Moments[${i}].End`;
+        });
+    }
+
+</script>

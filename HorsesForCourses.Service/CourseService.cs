@@ -10,6 +10,7 @@ public interface ICourseService
     Task<bool> OverwriteCourseMoments(int id, List<TimeSlotDTO> NewMoments);
     Task<bool> ConfirmCourse(int id);
     Task<bool> AddCoach(int CourseId, int CoachId);
+    List<TimeSlotDTO> TimeSlotListToTimeSlotDTOList(List<TimeSlot> slots);
 }
 
 public class CourseService : ICourseService
@@ -88,5 +89,10 @@ public class CourseService : ICourseService
         await _repo.Save();
 
         return true;
+    }
+
+    public List<TimeSlotDTO> TimeSlotListToTimeSlotDTOList(List<TimeSlot> slots)
+    {
+        return slots.Select(s => new TimeSlotDTO(s.Day, s.Start, s.End)).ToList();
     }
 }

@@ -6,6 +6,7 @@ public class TimeSlotDTO
     public TimeOnly Start { get; set; }
     public TimeOnly End { get; set; }
 
+    public TimeSlotDTO() { }
     public TimeSlotDTO(DayOfWeek day, TimeOnly start, TimeOnly end)
     {
         Day = day;
