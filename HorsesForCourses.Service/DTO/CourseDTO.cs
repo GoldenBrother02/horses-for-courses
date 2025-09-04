@@ -1,3 +1,5 @@
+using HorsesForCourses.Core;
+
 namespace HorsesForCourses.Service;
 
 public class CourseDTO
@@ -9,7 +11,8 @@ public class CourseDTO
     public List<string> Competenties { get; set; }
     public List<TimeSlotDTO> TimeSlots { get; set; }
     public IdNameCoach? Coach { get; set; }
-    public CourseDTO(string name, DateOnly start, DateOnly end, int id, List<string>? competenties = null,
+    public States Status { get; set; }
+    public CourseDTO(string name, DateOnly start, DateOnly end, int id, States status, List<string>? competenties = null,
         List<TimeSlotDTO>? timeSlots = null,
         IdNameCoach? coach = null)
     {
@@ -20,5 +23,6 @@ public class CourseDTO
         Competenties = competenties ?? new List<string>();
         TimeSlots = timeSlots ?? new List<TimeSlotDTO>();
         Coach = coach;
+        Status = status;
     }
 }

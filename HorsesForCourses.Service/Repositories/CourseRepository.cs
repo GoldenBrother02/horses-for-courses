@@ -40,6 +40,7 @@ public class CourseRepository
                 c.StartDate,
                 c.EndDate,
                 c.Id,
+                c.Status,
                 c.RequiredCompetencies,
                 c.Planning.Select(slot => new TimeSlotDTO(slot.Day, slot.Start, slot.End)).ToList(),
                 c.coach == null ? null! : new IdNameCoach(c.coach!.Id, c.coach.Name, c.coach.Email.ToString())))

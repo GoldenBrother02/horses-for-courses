@@ -99,17 +99,37 @@ public class CoursesController : Controller
     {
         var success = await _service.ConfirmCourse(id);
 
-        if (success) { return Ok(); }
-        return NotFound();
+        if (!success)
+            return NotFound();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> AddCoachMenu(int id)
+    {
+
+        var course = await _service.GetCourseById(id);
+        if (course == null)
+            return NotFound();
+
+        var model = new AddCoachToCourse
+        {
+            CourseId = course.Id,
+            CoachId = -1
+        };
+        return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<ActionResult> AddCoach(int CourseId, int CoachId)
+    public async Task<IActionResult> AddCoach(AddCoachToCourse model)
     {
-        var success = await _service.AddCoach(CourseId, CoachId);
+        var success = await _service.AddCoach(model.CourseId, model.CoachId);
 
-        if (success) { return Ok(); }
-        return NotFound();
+        if (!success)
+            return NotFound();
+
+        return RedirectToAction(nameof(Index));
     }
 }

@@ -41,12 +41,31 @@
                 </td>
                 <td>@(course.Coach?.Name ?? "none")</td>
                 <td>
-                    <a class="btn btn-primary" asp-controller="Courses" asp-action="EditMenu"
-                        asp-route-id="@course.Id">Edit</a>
                     <a class="btn btn-primary" asp-controller="Courses" asp-action="GetById"
                         asp-route-id="@course.Id">GetById</a>
-                    <a class="btn btn-primary" asp-controller="Courses" asp-action="Confirm"
-                        asp-route-id="@course.Id">Confirm</a>
+
+                    @if (course.Status != States.FINALISED)
+                    {
+                        <a class="btn btn-primary" asp-controller="Courses" asp-action="EditMenu"
+                            asp-route-id="@course.Id">Edit</a>
+                    }
+
+                    @if (course.Status == States.PENDING)
+                    {
+                        @if ((course.Competenties?.Any() ?? false) && (course.TimeSlots?.Any() ?? false))
+                        {
+                            <form asp-action="Confirm" asp-route-id="@course.Id" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success">Confirm</button>
+                            </form>
+                        }
+                    }
+
+                    else if (course.Status == States.CONFIRMED)
+                    {
+                        <a class="btn btn-success" asp-controller="Courses" asp-action="AddCoachMenu"
+                            asp-route-id="@course.Id">Add Coach</a>
+                    }
                 </td>
             </tr>
         }

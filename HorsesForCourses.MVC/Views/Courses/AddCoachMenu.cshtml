@@ -1,0 +1,19 @@
+@using HorsesForCourses.Core
+@using HorsesForCourses.Service
+
+@model AddCoachToCourse
+
+@{
+    ViewData["Title"] = "Course";
+}
+
+<h1>Add Coach to Course @Model.CourseId</h1>
+
+<form asp-controller="Courses" asp-action="AddCoach" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="CourseId" />
+
+    <input type="number" placeholder="Coach Id" name="CoachId" />
+
+    <button type="submit" class="btn btn-primary mt-3">Add</button>
+</form>
