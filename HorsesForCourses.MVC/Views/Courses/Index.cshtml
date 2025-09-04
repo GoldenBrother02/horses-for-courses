@@ -33,7 +33,7 @@
                 <td>@string.Join(", ", course.Competenties ?? Enumerable.Empty<string>())</td>
                 <td>
                     <ul>
-                        @foreach (var slot in course.TimeSlots ?? Enumerable.Empty<TimeSlotDTO>())
+                        @foreach (var slot in (course.TimeSlots ?? Enumerable.Empty<TimeSlotDTO>()).OrderBy(t => t.Day))
                         {
                             <li>@slot.Day : @slot.Start -> @slot.End</li>
                         }
