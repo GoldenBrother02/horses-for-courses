@@ -7,11 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Register repositories and services
-builder.Services.AddScoped<CoachRepository>();
-builder.Services.AddScoped<ICoachService, CoachService>();
+builder.Services.AddScoped<ICoachRepository, CoachRepository>();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 
-builder.Services.AddScoped<CourseRepository>();
+builder.Services.AddScoped<ICoachService, CoachService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+
 
 // Configure EF Core with SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>

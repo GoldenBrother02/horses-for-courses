@@ -3,7 +3,7 @@ using HorsesForCourses.Service;
 
 public interface ICourseService
 {
-    Task<Course> GetCourseById(int id);
+    Task<Course?> GetCourseById(int id);
     Task<Course> CreateCourse(Course course);
     Task<bool> OverwriteRequirements(int id, List<string> NewSkills);
     Task<PagedResult<CourseDTO>> GetAllCourses(int page = 1, int size = 10, CancellationToken ct = default);
@@ -16,15 +16,15 @@ public interface ICourseService
 public class CourseService : ICourseService
 {
 
-    private readonly CourseRepository _repo;
-    private readonly CoachRepository _coachRepo;
+    private readonly ICourseRepository _repo;
+    private readonly ICoachRepository _coachRepo;
 
-    public CourseService(CourseRepository repo, CoachRepository coachrepo)
+    public CourseService(ICourseRepository repo, ICoachRepository coachRepo)
     {
         _repo = repo;
-        _coachRepo = coachrepo;
+        _coachRepo = coachRepo;
     }
-    public async Task<Course> GetCourseById(int id)
+    public async Task<Course?> GetCourseById(int id)
     {
         var course = await _repo.GetCourseById(id);
         return course;

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 public interface ICoachService
 {
-    Task<Coach> GetCoachById(int id);
+    Task<Coach?> GetCoachById(int id);
     Task<Coach> CreateCoach(Coach coach);
     Task<bool> OverwriteCoachSkillset(int id, List<string> NewSkills);
     Task<PagedResult<CoachDTO>> GetAllCoaches(int page = 1, int size = 10, CancellationToken ct = default);
@@ -12,40 +12,35 @@ public interface ICoachService
 
 public class CoachService : ICoachService
 {
-    private readonly CoachRepository _repo;
+    private readonly ICoachRepository _repo;
 
-    public CoachService(CoachRepository repo)
+    public CoachService(ICoachRepository repo)
     {
         _repo = repo;
     }
 
-    public async Task<Coach> GetCoachById(int id)
-    {
-        var coach = await _repo.GetCoachById(id);
-        return coach;
-    }
+    public async Task<Coach?> GetCoachById(int id) => await _repo.GetCoachById(id);
 
     public async Task<Coach> CreateCoach(Coach coach)
     {
-        var Created = await _repo.CreateCoach(coach);
+        var created = await _repo.CreateCoach(coach);
         await _repo.Save();
-        return Created;
+        return created;
     }
 
     public async Task<bool> OverwriteCoachSkillset(int id, List<string> NewSkills)
     {
         var coach = await _repo.GetCoachById(id);
-        if (coach is null) { return false; }
+        if (coach is null) return false;
 
         coach.OverwriteCompetenties(NewSkills);
         await _repo.Save();
-
         return true;
     }
 
     public async Task<PagedResult<CoachDTO>> GetAllCoaches(int page = 1, int size = 10, CancellationToken ct = default)
     {
-        var result = await _repo.GetAllCoaches(page, size, ct);
-        return result;
+        return await _repo.GetAllCoaches(page, size, ct);
     }
 }
+

@@ -19,6 +19,7 @@
             <th>Competencies</th>
             <th>Timeslots</th>
             <th>Assigned Coach</th>
+            <th>State</th>
             <th>Edit</th>
         </tr>
     </thead>
@@ -40,6 +41,7 @@
                     </ul>
                 </td>
                 <td>@(course.Coach?.Name ?? "none")</td>
+                <td>@course.Status</td>
                 <td>
                     <a class="btn btn-primary" asp-controller="Courses" asp-action="GetById"
                         asp-route-id="@course.Id">GetById</a>
@@ -77,25 +79,21 @@
         @if (Model!.HasPrevious)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)" aria-label="Previous">
-                    &laquo; Previous
-                </a>
+                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)">
+                    <span aria-hidden="true">&laquo;</span> Previous</a>
             </li>
         }
-
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
             <li class="page-item @(Model.PageNumber == i ? "active" : "")">
                 <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
             </li>
         }
-
         @if (Model.HasNext)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)" aria-label="Next">
-                    Next &raquo;
-                </a>
+                <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)">
+                    Next <span aria-hidden="true">&raquo;</span></a>
             </li>
         }
     </ul>

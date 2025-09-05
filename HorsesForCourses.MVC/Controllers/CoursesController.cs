@@ -36,13 +36,13 @@ public class CoursesController : Controller
             return View("CreateMenu", post);
 
         var result = new Course(post.Name, post.Start, post.End);
-        await _service.CreateCourse(result);
+        var created = await _service.CreateCourse(result);
 
-        return RedirectToAction(nameof(GetById), new { id = result.Id });
+        return RedirectToAction(nameof(GetById), new { id = created.Id });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, int size = 10, CancellationToken ct = default)
+    public async Task<IActionResult> Index(int page = 1, int size = 5, CancellationToken ct = default)
     {
         var list = await _service.GetAllCourses(page, size, ct);
         if (list == null)

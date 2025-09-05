@@ -37,9 +37,9 @@ public class CoachesController : Controller
             return View("CreateMenu", post);
 
         var coach = new Coach(post.Name, post.Email);
-        await _service.CreateCoach(coach);
+        var created = await _service.CreateCoach(coach);
 
-        return RedirectToAction(nameof(GetById), new { id = coach.Id });
+        return RedirectToAction(nameof(GetById), new { id = created.Id });
     }
 
     [HttpGet]
@@ -72,7 +72,7 @@ public class CoachesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, int size = 10, CancellationToken ct = default)
+    public async Task<IActionResult> Index(int page = 1, int size = 5, CancellationToken ct = default)
     {
         var coaches = await _service.GetAllCoaches(page, size, ct);
         return View(coaches);
