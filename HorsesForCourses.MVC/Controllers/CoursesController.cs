@@ -42,7 +42,7 @@ public class CoursesController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, int size = 5, CancellationToken ct = default)
+    public async Task<IActionResult> Index(int page = 1, int size = 10, CancellationToken ct = default)
     {
         var list = await _service.GetAllCourses(page, size, ct);
         if (list == null)
