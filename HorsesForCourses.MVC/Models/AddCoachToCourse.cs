@@ -1,5 +1,3 @@
-using HorsesForCourses.Core;
-
 namespace HorsesForCourses.MVC;
 
 public class AddCoachToCourse

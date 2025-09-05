@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using HorsesForCourses.Core;
 using HorsesForCourses.Service;
 using Moq;
-using Xunit;
 
 namespace HorsesForCourses.Tests;
 

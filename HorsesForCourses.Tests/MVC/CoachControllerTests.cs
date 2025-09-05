@@ -1,12 +1,8 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using HorsesForCourses.Core;
 using HorsesForCourses.Service;
 using HorsesForCourses.MVC;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Xunit;
 
 namespace HorsesForCourses.Tests
 {

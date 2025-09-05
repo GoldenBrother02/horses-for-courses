@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-
 namespace HorsesForCourses.Core;
 
 public record Booking

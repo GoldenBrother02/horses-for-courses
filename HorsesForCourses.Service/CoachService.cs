@@ -1,6 +1,5 @@
 using HorsesForCourses.Core;
 using HorsesForCourses.Service;
-using Microsoft.EntityFrameworkCore;
 
 public interface ICoachService
 {
