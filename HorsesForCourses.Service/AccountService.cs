@@ -1,10 +1,13 @@
 using HorsesForCourses.Core;
+using SQLitePCL;
 
 namespace HorsesForCourses.Service;
 
 public interface IAccountService
 {
     Task<AppUser> CreateUser(AppUser user);
+    Task<AppUser?> GetUser(string email);
+    Task Deleteuser(AppUser user);
 }
 
 public class AccountService : IAccountService
@@ -20,5 +23,15 @@ public class AccountService : IAccountService
         var created = await _repo.CreateUser(user);
         await _repo.Save();
         return created;
+    }
+    public async Task<AppUser?> GetUser(string email)
+    {
+        var user = await _repo.GetUser(email);
+        return user;
+    }
+    public async Task Deleteuser(AppUser user)
+    {
+        _repo.RemoveUser(user);
+        await _repo.Save();
     }
 }

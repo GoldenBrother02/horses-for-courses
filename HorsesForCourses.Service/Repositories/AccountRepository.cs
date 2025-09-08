@@ -6,7 +6,9 @@ namespace HorsesForCourses.Service;
 public interface IAccountRepository
 {
     Task<AppUser> CreateUser(AppUser user);
+    Task<AppUser?> GetUser(string email);
     Task Save();
+    void RemoveUser(AppUser user);
 }
 
 public class AccountRepository : IAccountRepository
@@ -28,5 +30,15 @@ public class AccountRepository : IAccountRepository
     {
         await _context.Users.AddAsync(user);
         return user;
+    }
+
+    public async Task<AppUser?> GetUser(string email)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email.Value == email);
+    }
+
+    public void RemoveUser(AppUser user)
+    {
+        _context.Users.Remove(user);
     }
 }

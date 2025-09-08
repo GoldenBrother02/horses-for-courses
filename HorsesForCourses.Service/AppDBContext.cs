@@ -115,7 +115,7 @@ public class AppDbContext : DbContext
             course.ToTable("Courses");
         });
 
-        // ========== COURSE ==========
+        // ========== USER ==========
         modelBuilder.Entity<AppUser>(user =>
         {
             user.HasKey(u => u.Id);
@@ -124,6 +124,7 @@ public class AppDbContext : DbContext
             user.OwnsOne(c => c.Email, email =>
             {
                 email.Property(e => e.Value).HasColumnName("Email").IsRequired();
+                email.HasIndex(e => e.Value).IsUnique();
             });
             user.Property(u => u.PasswordHash).IsRequired();
 

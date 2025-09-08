@@ -17,10 +17,12 @@ public class AppUser
 
     public static AppUser From(string name, string email, string pass, string confirmPass)
     {
+        var hasher = new Pbkdf2PasswordHasher();
+
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Must have a name");
         var EmailValidate = EmailAddress.From(email);
         if (pass != confirmPass) throw new ArgumentException("Password is not same as confirmation password");
 
-        return new AppUser(name, EmailValidate, pass);
+        return new AppUser(name, EmailValidate, hasher.Hash(pass));
     }
 }

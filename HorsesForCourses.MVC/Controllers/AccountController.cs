@@ -30,10 +30,19 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(string email)
+    public async Task<IActionResult> Login(string email, string password)
     {
         var claims = new List<Claim> { new Claim(ClaimTypes.Name, email) };
         var id = new ClaimsIdentity(claims, "Cookies");
+        var hasher = new Pbkdf2PasswordHasher();
+
+        var user = await _service.GetUser(email);
+        if (user is null) return NotFound();
+
+        if (!hasher.Verify(password, user.PasswordHash))
+        {
+            return BadRequest("Invalid Password");
+        }
         await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(id));
         return Redirect("../Home");
     }
@@ -48,9 +57,19 @@ public class AccountController : Controller
     [HttpPost]
     public async Task<IActionResult> Register(RegisterAccountViewModel account)
     {
-        var user = AppUser.From(account.Name, account.Email, account.Pass, account.PassConfirm);
+        var user = AppUser.From(account.Name, account.Email, account.Password, account.PassConfirm);
         await _service.CreateUser(user);
-        await Login(user.Email.ToString());
+        return await Login(user.Email.Value, account.Password);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(string email)
+    {
+        var user = await _service.GetUser(email);
+        if (user is null) return NotFound();
+
+        await _service.Deleteuser(user);
+        await Logout();
         return Redirect("../Home");
     }
 }
