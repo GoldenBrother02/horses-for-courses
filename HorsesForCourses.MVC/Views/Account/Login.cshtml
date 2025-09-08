@@ -1,0 +1,9 @@
+<h1>Please log in</h1>
+
+<form asp-controller="Account" asp-action="Login" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="text" placeholder="Email" name="Email" />
+
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+</form>

@@ -1,5 +1,6 @@
 using HorsesForCourses.Core;
-using HorsesForCourses.Service;
+
+namespace HorsesForCourses.Service;
 
 public interface ICoachService
 {

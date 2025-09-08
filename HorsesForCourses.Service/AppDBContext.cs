@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
 {
     public DbSet<Coach> Coaches => Set<Coach>();
     public DbSet<Course> Courses => Set<Course>();
+    public DbSet<AppUser> Users => Set<AppUser>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -112,6 +113,21 @@ public class AppDbContext : DbContext
             );
 
             course.ToTable("Courses");
+        });
+
+        // ========== COURSE ==========
+        modelBuilder.Entity<AppUser>(user =>
+        {
+            user.HasKey(u => u.Id);
+
+            user.Property(u => u.Name).IsRequired();
+            user.OwnsOne(c => c.Email, email =>
+            {
+                email.Property(e => e.Value).HasColumnName("Email").IsRequired();
+            });
+            user.Property(u => u.PasswordHash).IsRequired();
+
+            user.ToTable("Users");
         });
     }
 }

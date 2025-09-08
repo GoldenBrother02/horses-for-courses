@@ -1,12 +1,15 @@
 using HorsesForCourses.Core;
 using HorsesForCourses.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HorsesForCourses.MVC;
 
+[Authorize]
 public class CoachesController : Controller
 {
     private readonly ICoachService _service;
+
 
     public CoachesController(ICoachService service)
     {
@@ -72,6 +75,7 @@ public class CoachesController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Index(int page = 1, int size = 5, CancellationToken ct = default)
     {
         var coaches = await _service.GetAllCoaches(page, size, ct);

@@ -9,14 +9,20 @@ builder.Services.AddControllersWithViews();
 // Register repositories and services
 builder.Services.AddScoped<ICoachRepository, CoachRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 builder.Services.AddScoped<ICoachService, CoachService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 
 // Configure EF Core with SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(@"Data Source=C:\Users\becod\horses-for-courses\HorsesForCourses.WebApi\app.db"));
+
+builder.Services.AddAuthentication("Cookies")
+.AddCookie("Cookies", o => { o.LoginPath = "/Account/Login"; });
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -39,6 +45,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Standard MVC route
