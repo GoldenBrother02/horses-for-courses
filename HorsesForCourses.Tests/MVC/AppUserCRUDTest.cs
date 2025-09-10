@@ -9,7 +9,7 @@ public class AppUserCrudTests : CrudTestBase<AppDbContext, AppUser>
     protected override AppDbContext CreateContext(DbContextOptions<AppDbContext> options) => new AppDbContext(options);
 
     protected override AppUser CreateEntity()
-        => AppUser.From("test", "test@mail.com", "1234", "1234");
+        => AppUser.From("test", "test@mail.com", "1234", "1234", "role");
 
     protected override DbSet<AppUser> GetDbSet(AppDbContext context)
         => context.Users;

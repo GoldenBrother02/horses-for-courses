@@ -3,6 +3,8 @@ using HorsesForCourses.Service;
 using HorsesForCourses.MVC;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace HorsesForCourses.Tests
 {
@@ -16,6 +18,20 @@ namespace HorsesForCourses.Tests
             _mockService = new Mock<ICoachService>();
             _controller = new CoachesController(_mockService.Object);
         }
+
+        private void AuthenticateController()
+        {
+            var user = new ClaimsPrincipal(new ClaimsIdentity(
+                new[] { new Claim(ClaimTypes.Name, "testuser@example.com") },
+                "mockAuthType"
+            ));
+
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
+        }
+
 
         [Fact]
         public async Task GetById_ReturnsView_WhenCoachExists()
@@ -82,6 +98,8 @@ namespace HorsesForCourses.Tests
         [Fact]
         public async Task EditMenu_ReturnsView_WhenCoachExists()
         {
+            AuthenticateController();
+
             var coach = new Coach("Jane", "jane@example.com");
             coach.AddCompetence("Running");
 
@@ -120,6 +138,8 @@ namespace HorsesForCourses.Tests
         [Fact]
         public async Task EditSkills_Success_RedirectsToGetById()
         {
+            AuthenticateController();
+
             var model = new EditCoachSkills { CoachId = 1, Skills = new List<string> { "Running" } };
             _mockService.Setup(s => s.OverwriteCoachSkillset(1, model.Skills)).ReturnsAsync(true);
 
@@ -133,6 +153,8 @@ namespace HorsesForCourses.Tests
         [Fact]
         public async Task EditSkills_Failure_ReturnsNotFound()
         {
+            AuthenticateController();
+
             var model = new EditCoachSkills { CoachId = 1, Skills = new List<string> { "Swimming" } };
             _mockService.Setup(s => s.OverwriteCoachSkillset(1, model.Skills)).ReturnsAsync(false);
 
