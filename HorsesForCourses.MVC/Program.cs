@@ -21,7 +21,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(@"Data Source=C:\Users\becod\horses-for-courses\HorsesForCourses.WebApi\app.db"));
 
 builder.Services.AddAuthentication("Cookies")
-.AddCookie("Cookies", o => { o.LoginPath = "/Account/Login"; });
+.AddCookie("Cookies", o => { o.LoginPath = "/Account/Login"; o.AccessDeniedPath = "/Account/AccessDenied"; });
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

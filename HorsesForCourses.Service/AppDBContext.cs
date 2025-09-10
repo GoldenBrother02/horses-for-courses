@@ -127,7 +127,7 @@ public class AppDbContext : DbContext
                 email.HasIndex(e => e.Value).IsUnique();
             });
             user.Property(u => u.PasswordHash).IsRequired();
-
+            user.Property(u => u.Role).IsRequired();
             user.ToTable("Users");
         });
     }

@@ -27,6 +27,7 @@ public class CoachesController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
     public IActionResult CreateMenu()
     {
         return View();
@@ -34,6 +35,7 @@ public class CoachesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateCoach(PostCoach post)
     {
         if (!ModelState.IsValid)
@@ -46,11 +48,14 @@ public class CoachesController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "admin, coach")]
     public async Task<IActionResult> EditMenu(int id)
     {
         var coach = await _service.GetCoachById(id);
         if (coach == null)
             return NotFound();
+
+        if (User.IsInRole("coach") && User.Identity?.Name != coach.Email.Value) { return Forbid(); }
 
         var model = new EditCoachSkills
         {
@@ -62,10 +67,14 @@ public class CoachesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin, coach")]
     public async Task<IActionResult> EditSkills(EditCoachSkills model)
     {
         if (!ModelState.IsValid)
             return View(model);
+
+        var coach = await _service.GetCoachById(model.CoachId);
+        if (User.IsInRole("coach") && User.Identity?.Name != coach!.Email.Value) { return Forbid(); }
 
         var success = await _service.OverwriteCoachSkillset(model.CoachId, model.Skills);
         if (!success)

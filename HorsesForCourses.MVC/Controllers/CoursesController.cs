@@ -1,9 +1,11 @@
 using HorsesForCourses.Core;
 using HorsesForCourses.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HorsesForCourses.MVC;
 
+[Authorize]
 public class CoursesController : Controller
 {
     private readonly ICourseService _service;
@@ -23,6 +25,7 @@ public class CoursesController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
     public IActionResult CreateMenu()
     {
         return View();
@@ -30,6 +33,7 @@ public class CoursesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> CreateCourse(PostCourse post)
     {
         if (!ModelState.IsValid)
@@ -51,6 +55,7 @@ public class CoursesController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> EditMenu(int id)
     {
 
@@ -69,6 +74,7 @@ public class CoursesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> EditSkills(EditCourse model)
     {
         if (!ModelState.IsValid)
@@ -83,6 +89,7 @@ public class CoursesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> EditMoments(EditCourse model)
     {
         if (!ModelState.IsValid)
@@ -97,6 +104,7 @@ public class CoursesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> Confirm(int id)
     {
         var success = await _service.ConfirmCourse(id);
@@ -108,6 +116,7 @@ public class CoursesController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> AddCoachMenu(int id)
     {
 
@@ -125,6 +134,7 @@ public class CoursesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "admin")]
     public async Task<IActionResult> AddCoach(AddCoachToCourse model)
     {
         var success = await _service.AddCoach(model.CourseId, model.CoachId);
