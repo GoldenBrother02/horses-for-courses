@@ -36,6 +36,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(string email, string password)
     {
         var hasher = new Pbkdf2PasswordHasher();
@@ -56,6 +57,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync("Cookies");
@@ -63,6 +65,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterAccountViewModel account, string choice)
     {
         var user = AppUser.From(account.Name, account.Email, account.Password, account.PassConfirm, choice);
@@ -72,6 +75,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(string email)
     {
         var user = await _service.GetUser(email);
@@ -83,6 +87,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DownloadUserData(string email)
     {
         var user = await _service.GetUser(email);
